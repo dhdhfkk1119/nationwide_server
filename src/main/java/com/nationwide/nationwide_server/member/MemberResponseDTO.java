@@ -1,0 +1,60 @@
+package com.nationwide.nationwide_server.member;
+
+import lombok.Data;
+
+public class MemberResponseDTO {
+
+    @Data
+    public static class DetailDTO{
+        private String name;
+        private String phoneNumber;
+        private String createdAt;
+        private Gender gender;
+        private String birth;
+        private String date;
+        private String addressNumber;
+        private String address;
+        private String addressDetail;
+        private String profileImage;
+
+        public DetailDTO(Member member){
+            this.name = member.getName();
+            this.phoneNumber = member.getPhoneNumber();
+            this.createdAt = member.getTime();
+            this.gender = member.getGender();
+            this.birth = member.getBirth();
+            this.date = member.getDate();
+            this.addressNumber = member.getAddressNumber();
+            this.address = member.getAddress();
+            this.addressDetail = member.getAddressDetail();
+            this.profileImage = member.getProfileImage();
+        }
+    }
+
+    @Data
+    public static class ListDTO{
+        private String name;
+        private String phoneNumber;
+        private String createdAt;
+        private Gender gender;
+        private String birth;
+        private String date;
+        private String addressNumber;
+        private String address;
+        private String addressDetail;
+        private String profileImage;
+
+        public ListDTO(Member member){
+            this.name = member.getName();
+            this.phoneNumber = member.getPhoneNumber();
+            this.createdAt = member.getTime();
+            this.gender = member.getGender();
+            this.birth = member.getBirth();
+            this.date = member.getDate();
+            this.addressNumber = member.getAddressNumber();
+            this.address = member.getAddress();
+            this.addressDetail = member.getAddressDetail();
+            this.profileImage = member.getProfileImage();
+        }
+    }
+}
