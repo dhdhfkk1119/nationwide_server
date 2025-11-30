@@ -43,6 +43,11 @@ dependencies {
 
 	// 데이터 포맷용
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+
+	// 로그인 토큰 인증
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
 tasks.named('test') {

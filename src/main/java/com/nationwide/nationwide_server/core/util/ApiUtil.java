@@ -1,6 +1,7 @@
 package com.nationwide.nationwide_server.core.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class ApiUtil<T> {
         return new ApiResult<>(false, null, new ApiError(errorMessage, status.value(), errorCode, validationErrors));
     }
 
-    @Getter @Setter
+    @Data
     public static class ApiResult<T> {
         private final boolean success;
         private final T response;
@@ -43,7 +44,7 @@ public class ApiUtil<T> {
         }
     }
 
-    @Getter @Setter
+    @Data
     public static class ApiError {
         private final String message;
         private final int status;

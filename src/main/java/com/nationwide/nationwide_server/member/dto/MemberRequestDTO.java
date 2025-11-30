@@ -1,6 +1,15 @@
-package com.nationwide.nationwide_server.member;
+package com.nationwide.nationwide_server.member.dto;
 
+import com.nationwide.nationwide_server.member.Member;
+import com.nationwide.nationwide_server.member.m_enum.Gender;
+import com.nationwide.nationwide_server.member.m_enum.LoginType;
+import com.nationwide.nationwide_server.terms.Terms;
+import com.nationwide.nationwide_server.terms.dto.TermsResponseDTO;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MemberRequestDTO {
 
@@ -9,7 +18,7 @@ public class MemberRequestDTO {
         private String name;
         private String nickName;
 
-        private String MemberId;
+        private String loginId;
         private String password;
         private String rePassword;
 
@@ -23,11 +32,13 @@ public class MemberRequestDTO {
         private String address;
         private String addressDetail;
 
+        private List<Long> agreedTermsIds;
+
         public Member toEntity(){
             return Member.builder()
                     .name(this.name)
                     .nickName(this.nickName)
-                    .MemberId(this.MemberId)
+                    .loginId(this.loginId)
                     .password(this.password)
                     .phoneNumber(this.phoneNumber)
                     .gender(this.gender)
@@ -38,5 +49,21 @@ public class MemberRequestDTO {
                     .addressDetail(this.addressDetail)
                     .build();
         }
+
+        public LocalDate getBirthDate() {
+            return LocalDate.of(
+                    Integer.parseInt(birth),
+                    Integer.parseInt(date.substring(0, 2)), // 월
+                    Integer.parseInt(date.substring(2, 4))  // 일
+            );
+        }
+    }
+
+    @Data
+    public static class LoginDTO{
+        private String loginId;
+        private String password;
+        private boolean autoLogin;
+        private LoginType provider;
     }
 }

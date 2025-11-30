@@ -1,5 +1,7 @@
-package com.nationwide.nationwide_server.member;
+package com.nationwide.nationwide_server.member.dto;
 
+import com.nationwide.nationwide_server.member.Member;
+import com.nationwide.nationwide_server.member.m_enum.Gender;
 import lombok.Data;
 
 public class MemberResponseDTO {
@@ -45,6 +47,35 @@ public class MemberResponseDTO {
         private String profileImage;
 
         public ListDTO(Member member){
+            this.name = member.getName();
+            this.phoneNumber = member.getPhoneNumber();
+            this.createdAt = member.getTime();
+            this.gender = member.getGender();
+            this.birth = member.getBirth();
+            this.date = member.getDate();
+            this.addressNumber = member.getAddressNumber();
+            this.address = member.getAddress();
+            this.addressDetail = member.getAddressDetail();
+            this.profileImage = member.getProfileImage();
+        }
+    }
+
+    @Data
+    public static class LoginDTO{
+        private Long id;
+        private String name;
+        private String phoneNumber;
+        private String createdAt;
+        private Gender gender;
+        private String birth;
+        private String date;
+        private String addressNumber;
+        private String address;
+        private String addressDetail;
+        private String profileImage;
+
+        public LoginDTO(Member member){
+            this.id = member.getId();
             this.name = member.getName();
             this.phoneNumber = member.getPhoneNumber();
             this.createdAt = member.getTime();

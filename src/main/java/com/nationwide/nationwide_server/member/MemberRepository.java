@@ -8,6 +8,11 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member,Long> {
 
+    // 고유 번호 찾기
     @Query("select m from Member m where m.Id = :memberId")
     Optional<Member> findByMemberId(@Param("memberId") Long memberId);
+
+    // 아이디 중복 검사
+    @Query("select m from Member m where m.loginId = :loginId")
+    boolean findByLoginId(@Param("loginId") String loginId);
 }
