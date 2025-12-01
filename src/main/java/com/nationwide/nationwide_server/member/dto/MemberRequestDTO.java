@@ -24,6 +24,7 @@ public class MemberRequestDTO {
 
         private String phoneNumber;
         private Gender gender;
+        private String email;
 
         private String birth; // 생년
         private String date; // 월 일
@@ -42,6 +43,7 @@ public class MemberRequestDTO {
                     .password(this.password)
                     .phoneNumber(this.phoneNumber)
                     .gender(this.gender)
+                    .email(email)
                     .birth(this.birth)
                     .date(this.date)
                     .addressNumber(this.addressNumber)

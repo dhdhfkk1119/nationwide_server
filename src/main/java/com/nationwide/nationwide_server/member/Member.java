@@ -31,6 +31,7 @@ public class Member {
     private String password;
 
     private String phoneNumber;
+    private String email;
     private boolean phoneVerified;
 
     @Enumerated(EnumType.STRING)
@@ -56,5 +57,7 @@ public class Member {
     }
 
 
+    private boolean isEmailVerified; // 이메일 인증 유무
+    private boolean isPhoneVerified; // 휴대폰 인증 유무
 
 }

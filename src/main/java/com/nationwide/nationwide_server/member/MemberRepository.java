@@ -12,6 +12,10 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     @Query("select m from Member m where m.Id = :memberId")
     Optional<Member> findByMemberId(@Param("memberId") Long memberId);
 
+    // 이메일 중복 체크
+    @Query("select m from Member m where m.email = :email")
+    boolean existsByEmail(@Param("email") String email);
+
     // 아이디 중복 검사
     @Query("select m from Member m where m.loginId = :loginId")
     boolean findByLoginId(@Param("loginId") String loginId);

@@ -3,6 +3,9 @@ package com.nationwide.nationwide_server.member;
 import com.nationwide.nationwide_server.core.errors.exception.Exception400;
 import com.nationwide.nationwide_server.core.errors.exception.Exception401;
 import com.nationwide.nationwide_server.core.errors.exception.Exception404;
+import com.nationwide.nationwide_server.email.Email;
+import com.nationwide.nationwide_server.email.EmailRepository;
+import com.nationwide.nationwide_server.email.EmailService;
 import com.nationwide.nationwide_server.member.dto.MemberRequestDTO;
 import com.nationwide.nationwide_server.member.dto.MemberResponseDTO;
 import com.nationwide.nationwide_server.member_terms.MemberTerms;
@@ -27,6 +30,8 @@ public class MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberTermsRepository memberTermsRepository;
     private final TermsService termsService;
+    private final EmailRepository emailRepository;
+    private final EmailService emailService;
     private final TermsRepository termsRepository;
 
     // 회원 가입
@@ -34,10 +39,19 @@ public class MemberService {
     public void save(MemberRequestDTO.SaveDTO saveDTO){
         Member member = saveDTO.toEntity();
 
+        Email verification = emailRepository
+                .findByEmail(saveDTO.getEmail())
+                .orElseThrow(() -> new Exception400("이메일 인증이 필요합니다"));
+
+        if(verification.isVerified()){
+            throw new Exception400("이메일 인증이 완료 되지 않았습니다");
+        }
+
         // 아이디 중복 검사
         if(findByLoginId(saveDTO.getLoginId())){
             throw new Exception401("이미 가입 된 유저입니다");
         }
+
 
         // 1. 모든 필수 약관 가져오기
         List<Terms> requiredTerms = termsRepository.findByIsRequired();
@@ -71,6 +85,7 @@ public class MemberService {
         }
         memberTermsRepository.saveAll(memberTermsList);
 
+        emailRepository.deleteByEmail(saveDTO.getEmail());
     }
 
 

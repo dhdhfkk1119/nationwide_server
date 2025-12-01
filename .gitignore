@@ -258,4 +258,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+
+# 비밀키 .env 안올리기
+.env
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,visualstudiocode,windows,eclipse,macos

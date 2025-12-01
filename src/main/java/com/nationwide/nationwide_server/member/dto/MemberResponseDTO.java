@@ -11,6 +11,7 @@ public class MemberResponseDTO {
         private String name;
         private String phoneNumber;
         private String createdAt;
+        private String email;
         private Gender gender;
         private String birth;
         private String date;
@@ -23,6 +24,7 @@ public class MemberResponseDTO {
             this.name = member.getName();
             this.phoneNumber = member.getPhoneNumber();
             this.createdAt = member.getTime();
+            this.email = member.getEmail();
             this.gender = member.getGender();
             this.birth = member.getBirth();
             this.date = member.getDate();
