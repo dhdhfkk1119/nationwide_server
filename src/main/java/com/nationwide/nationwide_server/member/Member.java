@@ -31,8 +31,6 @@ public class Member {
     private String password;
 
     private String phoneNumber;
-    private String email;
-    private boolean phoneVerified;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -47,7 +45,7 @@ public class Member {
     private String profileImage; // 프로필 이미지 -> fileUpload
 
     @Enumerated(EnumType.STRING)
-    private LoginType LoginType; // 로그인 타입 설정
+    private LoginType loginType = LoginType.LOCAL; // 로그인 타입 설정
 
     @CreationTimestamp
     private Timestamp createdAt; // 생성 일
@@ -57,7 +55,7 @@ public class Member {
     }
 
 
-    private boolean isEmailVerified; // 이메일 인증 유무
-    private boolean isPhoneVerified; // 휴대폰 인증 유무
+    private boolean isEmailVerified = true; // 이메일 인증 유무
+    private boolean isPhoneVerified = false; // 휴대폰 인증 유무
 
 }

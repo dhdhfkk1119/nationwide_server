@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Random;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class EmailService {
     private final EmailRepository emailRepository;
@@ -24,18 +24,18 @@ public class EmailService {
     private final JavaMailSender mailSender;
 
     @Transactional
-    public void sendVerificationCode(String email){
+    public void sendVerificationCode(String loginId){
 
-        if(memberRepository.existsByEmail(email)){
+        if(memberRepository.existsByLoginId(loginId)){
             throw new Exception400("이미 가입 된 이메일 입니다");
         }
 
-        emailRepository.deleteByEmail(email);
+        emailRepository.deleteByLoginId(loginId);
 
         String code = generateRandomCode();
 
         Email verification = Email.builder()
-                .email(email)
+                .loginId(loginId)
                 .code(code)
                 .verified(false)
                 .expiredAt(LocalDateTime.now().plusMinutes(5))
@@ -44,16 +44,14 @@ public class EmailService {
         emailRepository.save(verification);
 
         // 5. 이메일 발송
-        sendEmail(email, code);
+        sendEmail(loginId, code);
     }
 
     @Transactional
-    public void verifyCode(String email, String code) {
+    public void verifyCode(String loginId, String code) {
 
         // 1. EmailVerification 조회
-        Email verification = emailRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new Exception404("인증 요청을 찾을 수 없습니다"));
+        Email verification = findByLoginId(loginId);
 
         // 2. 이미 인증됐는지 확인
         if(verification.isVerified()) {
@@ -77,6 +75,7 @@ public class EmailService {
         emailRepository.save(verification);
     }
 
+    // 다시 전송
     @Transactional
     public void resendVerificationCode(String email) {
         // 기존 코드 삭제하고 새로 발송
@@ -90,6 +89,7 @@ public class EmailService {
     }
 
 
+    // 이메일 인증 전송 형태 G-Mail 보이는 형식
     private void sendEmail(String to, String code) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -116,5 +116,9 @@ public class EmailService {
                 "</div>" +
                 "<p>인증 코드는 5분간 유효합니다.</p>" +
                 "</div>";
+    }
+
+    public Email findByLoginId(String loginId){
+      return emailRepository.findByEmail(loginId).orElseThrow(() -> new Exception404("유효한 이메일이 아닙니다"));
     }
 }

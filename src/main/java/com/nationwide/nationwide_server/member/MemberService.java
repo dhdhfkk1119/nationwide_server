@@ -39,11 +39,9 @@ public class MemberService {
     public void save(MemberRequestDTO.SaveDTO saveDTO){
         Member member = saveDTO.toEntity();
 
-        Email verification = emailRepository
-                .findByEmail(saveDTO.getEmail())
-                .orElseThrow(() -> new Exception400("이메일 인증이 필요합니다"));
+        emailService.findByLoginId(saveDTO.getLoginId());
 
-        if(verification.isVerified()){
+        if(!emailRepository.existsByLoginId(saveDTO.getLoginId())){
             throw new Exception400("이메일 인증이 완료 되지 않았습니다");
         }
 
@@ -85,7 +83,7 @@ public class MemberService {
         }
         memberTermsRepository.saveAll(memberTermsList);
 
-        emailRepository.deleteByEmail(saveDTO.getEmail());
+        emailRepository.deleteByLoginId(saveDTO.getLoginId());
     }
 
 
@@ -102,8 +100,9 @@ public class MemberService {
                 .orElseThrow(() -> new Exception404("회원을 찾을 수 없습니다"));
     }
 
-    // 회원 로그인 아이디 Member 유무 검사
+    // 회원 로그인 아이디 Member 이메일 유무 검사
     public boolean findByLoginId(String loginId){
-        return memberRepository.findByLoginId(loginId);
+        return memberRepository.existsByLoginId(loginId);
     }
+
 }

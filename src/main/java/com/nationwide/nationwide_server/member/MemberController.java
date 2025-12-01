@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/member")
 @RequiredArgsConstructor
-@Slf4j
 public class MemberController {
     private final MemberService memberService;
-    private final EmailService emailService;
 
+    // 회원가입
     @PostMapping("/save")
     public ResponseEntity<?> saveMember(@RequestBody MemberRequestDTO.SaveDTO dto){
 
@@ -35,11 +34,10 @@ public class MemberController {
         return ResponseEntity.ok(ApiUtil.success("회원가입 성공"));
     }
 
-    // 중복체크
+    // 이메일 중복체크
     @GetMapping("/check-email/{email}")
     public ResponseEntity<?> checkEmail(@PathVariable("email")String email){
-        log.info("아이디 체크 인증 : {}" , memberService.checkEmail(email));
-        return ResponseEntity.ok(memberService.checkEmail(email));
+        return ResponseEntity.ok(memberService.findByLoginId(email));
     }
 
 

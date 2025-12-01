@@ -15,17 +15,13 @@ spring:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
 
-
-logging:
-  level:
-    org.hibernate.SQL: debug
-
   #SMPT 이메일 인증
   mail:
     host: smtp.gmail.com          # 구글 SMTP 서버 주소
     port: 587                     # 구글 SMTP 포트 번호
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: whwhwjddn123@gmail.com
+    password: qbkejbzudkpjxfnw
+
     properties:
       mail:
         smtp:
@@ -33,3 +29,8 @@ logging:
           timeout: 5000           # 이메일 전송 타임아웃 시간
           starttls:
             enable: true          # TLS를 통해 안전한 통신 사용 여부
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+

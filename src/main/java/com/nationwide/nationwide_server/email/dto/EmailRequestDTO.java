@@ -1,6 +1,5 @@
 package com.nationwide.nationwide_server.email.dto;
 
-import com.nationwide.nationwide_server.email.Email;
 import lombok.*;
 
 @Getter
@@ -10,7 +9,7 @@ import lombok.*;
 @Builder
 public class EmailRequestDTO {
 
-    private String email;
+    private String loginId;
     private String code;
 
 }

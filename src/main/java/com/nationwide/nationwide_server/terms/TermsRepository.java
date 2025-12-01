@@ -10,9 +10,10 @@ import java.util.Optional;
 public interface TermsRepository extends JpaRepository<Terms,Long> {
 
     // 약관 있는지 검사
-    @Query("select t from terms t where t.id =:id")
+    @Query("select t from Terms t where t.id =:id")
     Optional<Terms> findById(@Param("id") Long id);
 
+    @Query("select t from Terms t where t.isRequired = true")
     List<Terms> findByIsRequired();
 
 }
