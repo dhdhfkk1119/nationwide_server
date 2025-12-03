@@ -62,8 +62,14 @@ public class MemberResponseDTO {
 
     @Data
     public static class LoginDTO{
+
+        private String accessToken;
+        private String refreshToken;
+        private Long expiresIn;
+
         private Long id;
         private String name;
+        private String nickName;
         private String phoneNumber;
         private String createdAt;
         private Gender gender;
@@ -74,9 +80,14 @@ public class MemberResponseDTO {
         private String addressDetail;
         private String profileImage;
 
-        public LoginDTO(Member member){
+
+        public LoginDTO(Member member,String accessToken, String refreshToken,Long expiresIn){
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            this.expiresIn = expiresIn;
             this.id = member.getId();
             this.name = member.getName();
+            this.nickName = member.getNickName();
             this.phoneNumber = member.getPhoneNumber();
             this.createdAt = member.getTime();
             this.gender = member.getGender();

@@ -2,10 +2,9 @@ package com.nationwide.nationwide_server.member;
 
 import com.nationwide.nationwide_server.core.errors.exception.Exception401;
 import com.nationwide.nationwide_server.core.util.ApiUtil;
-import com.nationwide.nationwide_server.email.EmailService;
 import com.nationwide.nationwide_server.member.dto.MemberRequestDTO;
+import com.nationwide.nationwide_server.member.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,8 +36,14 @@ public class MemberController {
     // 이메일 중복체크
     @GetMapping("/check-email/{email}")
     public ResponseEntity<?> checkEmail(@PathVariable("email")String email){
-        return ResponseEntity.ok(memberService.findByLoginId(email));
+        return ResponseEntity.ok(memberService.existsByLoginId(email));
     }
 
+    // 로그인 하기
+    @PostMapping("/login")
+    public ResponseEntity<?> loginMember(@RequestBody MemberRequestDTO.LoginDTO dto){
+        MemberResponseDTO.LoginDTO loginDTO = memberService.loginMember(dto);
+        return ResponseEntity.ok(ApiUtil.success(loginDTO));
+    }
 
 }

@@ -3,6 +3,7 @@ package com.nationwide.nationwide_server.member;
 import com.nationwide.nationwide_server.core.util.TimeFormatUtil;
 import com.nationwide.nationwide_server.member.m_enum.Gender;
 import com.nationwide.nationwide_server.member.m_enum.LoginType;
+import com.nationwide.nationwide_server.member.m_enum.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,13 +43,17 @@ public class Member {
     private String address; // 주소
     private String addressDetail; // 상세 주소
 
-    private String profileImage; // 프로필 이미지 -> fileUpload
+    private String profileImage = "/uploads/member-images/profile.png"; // 프로필 이미지 -> fileUpload
 
     @Enumerated(EnumType.STRING)
     private LoginType loginType = LoginType.LOCAL; // 로그인 타입 설정
 
     @CreationTimestamp
     private Timestamp createdAt; // 생성 일
+
+
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole = UserRole.USER;
 
     public String getTime(){
         return TimeFormatUtil.timestampFormat(createdAt);

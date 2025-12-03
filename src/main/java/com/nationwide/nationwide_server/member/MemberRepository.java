@@ -12,7 +12,11 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     @Query("select m from Member m where m.id =:memberId")
     Optional<Member> findByMemberId(@Param("memberId") Long memberId);
 
-    // 아이디 중복 검사
+    // 아이디 중복 검사 
     boolean existsByLoginId(String loginId);
+
+    // 아이디 체크
+    @Query("select m from Member m where m.loginId =:loginId")
+    Optional<Member> findByLoginId(@Param("loginId") String loginId);
 
 }

@@ -3,7 +3,7 @@ package com.nationwide.nationwide_server.member;
 import com.nationwide.nationwide_server.core.errors.exception.Exception400;
 import com.nationwide.nationwide_server.core.errors.exception.Exception401;
 import com.nationwide.nationwide_server.core.errors.exception.Exception404;
-import com.nationwide.nationwide_server.email.Email;
+import com.nationwide.nationwide_server.core.jwt.JwtTokenProvider;
 import com.nationwide.nationwide_server.email.EmailRepository;
 import com.nationwide.nationwide_server.email.EmailService;
 import com.nationwide.nationwide_server.member.dto.MemberRequestDTO;
@@ -33,6 +33,7 @@ public class MemberService {
     private final EmailRepository emailRepository;
     private final EmailService emailService;
     private final TermsRepository termsRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 회원 가입
     @Transactional
@@ -46,7 +47,7 @@ public class MemberService {
         }
 
         // 아이디 중복 검사
-        if(findByLoginId(saveDTO.getLoginId())){
+        if(existsByLoginId(saveDTO.getLoginId())){
             throw new Exception401("이미 가입 된 유저입니다");
         }
 
@@ -86,6 +87,27 @@ public class MemberService {
         emailRepository.deleteByLoginId(saveDTO.getLoginId());
     }
 
+    // 회원 로그인
+    public MemberResponseDTO.LoginDTO loginMember(MemberRequestDTO.LoginDTO dto){
+        Member member = findByLoginId(dto.getLoginId());
+
+        if(!bCryptPasswordEncoder.matches(dto.getPassword(), member.getPassword())) {
+            throw new Exception401("비밀번호가 일치하지 않습니다");
+        }
+
+        String accessToken = jwtTokenProvider.createAccessToken(member);
+
+        String refreshToken = null;
+        if(dto.isAutoLogin()){
+            refreshToken = jwtTokenProvider.createRefreshToken(member);
+        }
+
+        Long expiresIn = jwtTokenProvider.getAccessExpirationSeconds();
+
+
+        return new MemberResponseDTO.LoginDTO(member,accessToken,refreshToken,expiresIn);
+    }
+
 
     // 회원 유저 정보 찾기
     public MemberResponseDTO.DetailDTO detail(Long memberId){
@@ -101,8 +123,14 @@ public class MemberService {
     }
 
     // 회원 로그인 아이디 Member 이메일 유무 검사
-    public boolean findByLoginId(String loginId){
+    public boolean existsByLoginId(String loginId){
         return memberRepository.existsByLoginId(loginId);
     }
+
+    public Member findByLoginId(String loginId){
+        return memberRepository.findByLoginId(loginId).orElseThrow(() -> new Exception404("아이디가 존재 하지 않습니다"));
+    }
+
+
 
 }
