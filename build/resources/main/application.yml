@@ -1,9 +1,12 @@
+server:
+  port: 80
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/nationwide?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: asd1234
+    password: 1234
 
 
   jpa:
@@ -14,11 +17,6 @@ spring:
     properties:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
-
-
-logging:
-  level:
-    org.hibernate.SQL: debug
 
   #SMPT 이메일 인증
   mail:
@@ -34,3 +32,11 @@ logging:
           timeout: 5000           # 이메일 전송 타임아웃 시간
           starttls:
             enable: true          # TLS를 통해 안전한 통신 사용 여부
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+jwt:
+  access-expiration-ms: 3600000
+  refresh-expiration-ms: 604800000
