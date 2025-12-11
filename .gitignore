@@ -258,6 +258,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+#Git gradel 추적 삭제
+.gradle/
+
 
 # 비밀키 .env 안올리기
 .env

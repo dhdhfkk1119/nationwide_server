@@ -96,7 +96,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(to);
-            helper.setSubject("[서비스명] 이메일 인증 코드");
+            helper.setSubject("[NationWide] 이메일 인증 코드");
             helper.setText(buildEmailContent(code), true);  // HTML 형식
 
             mailSender.send(message);
