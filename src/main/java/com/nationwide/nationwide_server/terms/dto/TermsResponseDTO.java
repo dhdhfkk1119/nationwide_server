@@ -12,11 +12,13 @@ public class TermsResponseDTO {
     public static class TermsItem {
         private Long id;
         private String title;
+        private String content;
         private Boolean required; // 필수 동의 여부
 
         public TermsItem(Terms terms) {
             this.id = terms.getId();
             this.title = terms.getTitle();
+            this.content = terms.getContent();
             this.required = terms.isRequired(); // Terms 엔티티에 해당 필드가 있다고 가정
         }
 
