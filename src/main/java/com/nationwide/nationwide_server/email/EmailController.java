@@ -1,6 +1,6 @@
 package com.nationwide.nationwide_server.email;
 
-import com.nationwide.nationwide_server.core.util.ApiUtil;
+import com.nationwide.nationwide_server._core.util.ApiUtil;
 import com.nationwide.nationwide_server.email.dto.EmailRequestDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

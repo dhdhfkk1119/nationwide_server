@@ -1,11 +1,15 @@
 package com.nationwide.nationwide_server.member;
 
-import com.nationwide.nationwide_server.core.errors.exception.Exception400;
-import com.nationwide.nationwide_server.core.errors.exception.Exception401;
-import com.nationwide.nationwide_server.core.errors.exception.Exception404;
-import com.nationwide.nationwide_server.core.jwt.JwtTokenProvider;
+import com.nationwide.nationwide_server._core.errors.exception.Exception400;
+import com.nationwide.nationwide_server._core.errors.exception.Exception401;
+import com.nationwide.nationwide_server._core.errors.exception.Exception404;
+import com.nationwide.nationwide_server._core.jwt.JwtTokenProvider;
+import com.nationwide.nationwide_server._core.util.SessionUser;
 import com.nationwide.nationwide_server.email.EmailRepository;
 import com.nationwide.nationwide_server.email.EmailService;
+import com.nationwide.nationwide_server.image_file.ImageFile;
+import com.nationwide.nationwide_server.image_file.ImageFileService;
+import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
 import com.nationwide.nationwide_server.member.dto.MemberRequestDTO;
 import com.nationwide.nationwide_server.member.dto.MemberResponseDTO;
 import com.nationwide.nationwide_server.member_terms.MemberTerms;
@@ -17,10 +21,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +40,7 @@ public class MemberService {
     private final EmailRepository emailRepository;
     private final EmailService emailService;
     private final TermsRepository termsRepository;
+    private final ImageFileService imageFileService;
     private final JwtTokenProvider jwtTokenProvider;
 
     // 회원 가입
@@ -43,12 +51,12 @@ public class MemberService {
         emailService.findByLoginId(saveDTO.getLoginId());
 
         if(!emailRepository.existsByLoginId(saveDTO.getLoginId())){
-            throw new Exception400("이메일 인증이 완료 되지 않았습니다");
+            throw new Exception400(EMAIL_NOT_VERIFIED.getMessage());
         }
 
         // 아이디 중복 검사
         if(existsByLoginId(saveDTO.getLoginId())){
-            throw new Exception401("이미 가입 된 유저입니다");
+            throw new Exception401(MEMBER_ALREADY_EXISTS.getMessage());
         }
 
 
@@ -62,7 +70,7 @@ public class MemberService {
 
 
         if (!saveDTO.getAgreedTermsIds().containsAll(requiredIds)) {
-            throw new Exception400("필수 약관에 동의해야 합니다");
+            throw new Exception400(TERMS_IS_AGREED.getMessage());
         }
 
 
@@ -82,6 +90,7 @@ public class MemberService {
                     .build());
 
         }
+        member.setEmailVerified(true);
         memberTermsRepository.saveAll(memberTermsList);
 
         emailRepository.deleteByLoginId(saveDTO.getLoginId());
@@ -92,7 +101,7 @@ public class MemberService {
         Member member = findByLoginId(dto.getLoginId());
 
         if(!bCryptPasswordEncoder.matches(dto.getPassword(), member.getPassword())) {
-            throw new Exception401("비밀번호가 일치하지 않습니다");
+            throw new Exception401(MEMBER_PASS_NOT_MISMATCH.getMessage());
         }
 
         String accessToken = jwtTokenProvider.createAccessToken(member);
@@ -104,22 +113,58 @@ public class MemberService {
 
         Long expiresIn = jwtTokenProvider.getAccessExpirationSeconds();
 
+        String thumbnailImagePath = member.getImageFiles().stream()
+                .findFirst()                      // 첫 번째 요소를 Optional로 반환
+                .map(ImageFile::getImageFilePath) // 요소가 있다면 경로 추출
+                .orElse(null);                    // 없다면 null 반환
 
-        return new MemberResponseDTO.LoginDTO(member,accessToken,refreshToken,expiresIn);
+        return new MemberResponseDTO.LoginDTO(member,accessToken,refreshToken,expiresIn,thumbnailImagePath);
+    }
+
+    // 회원 업데이트
+    @Transactional
+    public void updateMember(Long memberIdx,
+                             SessionUser sessionUser,
+                             MemberRequestDTO.UpdateDTO updateDTO,
+                             List<MultipartFile> file){
+
+        Member member = findById(memberIdx);
+        if(!member.getIsMine(sessionUser.getId())) {
+            throw new Exception401(MEMBER_NOT_MINE.getMessage());
+        }
+
+        // 기존 이미지 중에 다른 값 있으면 삭제
+        if(updateDTO.getImageFileId() != null){
+            imageFileService.syncDeleteImages(member,updateDTO.getImageFileId());
+        }
+
+        // 삭제 이후 새로운 이미지 추가
+        if(file != null && !file.isEmpty()){
+            imageFileService.addNewImages(member,file);
+        }
+
+        member.updateMember(updateDTO);
     }
 
 
     // 회원 유저 정보 찾기
-    public MemberResponseDTO.DetailDTO detail(Long memberId){
+    public MemberResponseDTO.DetailDTO detail(Long memberId) {
         Member member = findById(memberId);
-        return new MemberResponseDTO.DetailDTO(member);
+
+        List<ImageResponseDTO> imageFileDTOs = member.getImageFiles().stream()
+                .map(imageFile -> imageFileService.imageFileDetailListInfo(imageFile.getImageFileId()))
+                .flatMap(List::stream)
+                .toList();
+
+
+        return new MemberResponseDTO.DetailDTO(member, imageFileDTOs);
     }
 
 
     // 회원 고유 번호 Member 유무 검사
     public Member findById(Long memberId){
         return memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new Exception404("회원을 찾을 수 없습니다"));
+                .orElseThrow(() -> new Exception404(MEMBER_NOT_FOUND.getMessage()));
     }
 
     // 회원 로그인 아이디 Member 이메일 유무 검사
@@ -128,7 +173,7 @@ public class MemberService {
     }
 
     public Member findByLoginId(String loginId){
-        return memberRepository.findByLoginId(loginId).orElseThrow(() -> new Exception404("아이디가 존재 하지 않습니다"));
+        return memberRepository.findByLoginId(loginId).orElseThrow(() -> new Exception404(MEMBER_ID_NOT_FOUND.getMessage()));
     }
 
 

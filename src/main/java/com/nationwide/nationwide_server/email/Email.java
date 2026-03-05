@@ -1,7 +1,7 @@
 package com.nationwide.nationwide_server.email;
 
 
-import com.nationwide.nationwide_server.core.errors.exception.Exception400;
+import com.nationwide.nationwide_server._core.errors.exception.Exception400;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +30,7 @@ public class Email {
 
     private LocalDateTime expiredAt;
 
+    @Builder.Default
     private Integer attemptCount = 0;
 
     private LocalDateTime createdAt;

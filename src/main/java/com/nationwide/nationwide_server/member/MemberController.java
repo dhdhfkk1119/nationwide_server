@@ -1,14 +1,19 @@
 package com.nationwide.nationwide_server.member;
 
-import com.nationwide.nationwide_server.core.errors.exception.Exception401;
-import com.nationwide.nationwide_server.core.util.ApiUtil;
+import com.nationwide.nationwide_server._core._custom_annotation.LoginUser;
+import com.nationwide.nationwide_server._core._enum.ResourceType;
+import com.nationwide.nationwide_server._core.errors.exception.Exception401;
+import com.nationwide.nationwide_server._core.util.ApiUtil;
+import com.nationwide.nationwide_server._core.util.SessionUser;
 import com.nationwide.nationwide_server.member.dto.MemberRequestDTO;
 import com.nationwide.nationwide_server.member.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/member")
@@ -30,7 +35,7 @@ public class MemberController {
         }
 
         memberService.save(dto);
-        return ResponseEntity.ok(ApiUtil.success("회원가입 성공"));
+        return ResponseEntity.ok(ApiUtil.success(ResourceType.MEMBER.getSaveSuccess()));
     }
 
     // 이메일 중복체크
@@ -45,5 +50,30 @@ public class MemberController {
         MemberResponseDTO.LoginDTO loginDTO = memberService.loginMember(dto);
         return ResponseEntity.ok(ApiUtil.success(loginDTO));
     }
+
+    // 현재 로그인한 유저의 정보 가져오기
+    @GetMapping("/me")
+    public ResponseEntity<?> me(@LoginUser SessionUser sessionUser) {
+
+        if (sessionUser == null) {
+            throw new Exception401("로그인이 필요합니다");
+        }
+
+        MemberResponseDTO.DetailDTO dto =
+                memberService.detail(sessionUser.getId());
+
+        return ResponseEntity.ok(ApiUtil.success(dto));
+    }
+
+    @PutMapping("/update/{memberIdx}")
+    public ResponseEntity<?> updateMember(@LoginUser SessionUser sessionUser,
+                                          @PathVariable("memberIdx") Long memberIdx,
+                                          @RequestPart("dto") MemberRequestDTO.UpdateDTO dto,
+                                          @RequestPart("files") List<MultipartFile> file){
+        memberService.updateMember(memberIdx,sessionUser,dto,file);
+        return ResponseEntity.ok(ApiUtil.success(ResourceType.MEMBER.getUpdateSuccess()));
+    }
+
+
 
 }

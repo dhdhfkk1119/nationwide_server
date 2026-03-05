@@ -1,8 +1,8 @@
 package com.nationwide.nationwide_server.email;
 
-import com.nationwide.nationwide_server.core.errors.exception.Exception400;
-import com.nationwide.nationwide_server.core.errors.exception.Exception404;
-import com.nationwide.nationwide_server.core.errors.exception.Exception500;
+import com.nationwide.nationwide_server._core.errors.exception.Exception400;
+import com.nationwide.nationwide_server._core.errors.exception.Exception404;
+import com.nationwide.nationwide_server._core.errors.exception.Exception500;
 import com.nationwide.nationwide_server.member.MemberRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

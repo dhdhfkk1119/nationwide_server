@@ -66,4 +66,23 @@ public class MemberRequestDTO {
         private boolean autoLogin;
         private LoginType provider;
     }
+
+    @Data
+    public static class UpdateDTO{
+        private String nickName;
+        private String phoneNumber;
+        private Gender gender;
+        private String birth; // 생년
+        private String date; // 월 일
+        private String addressNumber;
+        private String address;
+        private String addressDetail;
+        private List<String> imageFileId;
+    }
+
+    @Data
+    public static class UserMe{
+        private String accessToken;
+        private String refreshToken;
+    }
 }

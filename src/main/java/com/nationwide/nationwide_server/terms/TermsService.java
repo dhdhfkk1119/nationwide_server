@@ -1,6 +1,6 @@
 package com.nationwide.nationwide_server.terms;
 
-import com.nationwide.nationwide_server.core.errors.exception.Exception404;
+import com.nationwide.nationwide_server._core.errors.exception.Exception404;
 import com.nationwide.nationwide_server.terms.dto.TermsResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

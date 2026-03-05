@@ -1,6 +1,6 @@
 package com.nationwide.nationwide_server.terms;
 
-import com.nationwide.nationwide_server.core.util.ApiUtil;
+import com.nationwide.nationwide_server._core.util.ApiUtil;
 import com.nationwide.nationwide_server.terms.dto.TermsResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

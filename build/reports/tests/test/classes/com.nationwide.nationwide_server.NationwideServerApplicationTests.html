@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - NationwideServerApplicationTests</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>NationwideServerApplicationTests</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.nationwide.nationwide_server.html">com.nationwide.nationwide_server</a> &gt; NationwideServerApplicationTests</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">1.569s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="tab-container">
+<ul class="tabLinks">
+<li>
+<a href="#">Tests</a>
+</li>
+<li>
+<a href="#">Standard output</a>
+</li>
+<li>
+<a href="#">Standard error</a>
+</li>
+</ul>
+<div class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">contextLoads()</td>
+<td class="success">1.569s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>23:03:01.920 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.nationwide.nationwide_server.NationwideServerApplicationTests]: NationwideServerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+23:03:02.020 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.nationwide.nationwide_server.NationwideServerApplication for test class com.nationwide.nationwide_server.NationwideServerApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.1)
+
+2026-01-27T23:03:02.381+09:00  INFO 25616 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : Starting NationwideServerApplicationTests using Java 21.0.7 with PID 25616 (started by whwhw in D:\Project\nationwide_server)
+2026-01-27T23:03:02.382+09:00  INFO 25616 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : No active profile set, falling back to 1 default profile: &quot;default&quot;
+2026-01-27T23:03:02.946+09:00  INFO 25616 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-27T23:03:03.005+09:00  INFO 25616 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 53 ms. Found 6 JPA repository interfaces.
+2026-01-27T23:03:03.575+09:00  INFO 25616 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-27T23:03:03.626+09:00  INFO 25616 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-01-27T23:03:03.653+09:00  INFO 25616 --- [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-01-27T23:03:03.907+09:00  INFO 25616 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-27T23:03:03.938+09:00  INFO 25616 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-27T23:03:04.336+09:00  INFO 25616 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@46ee7013
+2026-01-27T23:03:04.340+09:00  INFO 25616 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-27T23:03:05.498+09:00  INFO 25616 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-27T23:03:05.839+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    create table board_tb (
+        id bigint not null auto_increment,
+        content varchar(255),
+        created_at datetime(6),
+        del_date datetime(6),
+        title varchar(255),
+        update_at datetime(6),
+        view_cnt bigint,
+        member_idx bigint,
+        primary key (id)
+    ) engine=InnoDB
+Hibernate: 
+    create table board_tb (
+        id bigint not null auto_increment,
+        content varchar(255),
+        created_at datetime(6),
+        del_date datetime(6),
+        title varchar(255),
+        update_at datetime(6),
+        view_cnt bigint,
+        member_idx bigint,
+        primary key (id)
+    ) engine=InnoDB
+2026-01-27T23:03:06.113+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    create table image_file_tb (
+        image_file_id varchar(255) not null,
+        created_at datetime(6),
+        del_date datetime(6),
+        file_db_type enum ('BOARD','MEMBER'),
+        image_file_name varchar(255),
+        image_file_path varchar(255),
+        update_at datetime(6),
+        board_id bigint,
+        member_id bigint,
+        primary key (image_file_id)
+    ) engine=InnoDB
+Hibernate: 
+    create table image_file_tb (
+        image_file_id varchar(255) not null,
+        created_at datetime(6),
+        del_date datetime(6),
+        file_db_type enum ('BOARD','MEMBER'),
+        image_file_name varchar(255),
+        image_file_path varchar(255),
+        update_at datetime(6),
+        board_id bigint,
+        member_id bigint,
+        primary key (image_file_id)
+    ) engine=InnoDB
+2026-01-27T23:03:06.178+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table member_tb 
+       add column del_date datetime(6)
+Hibernate: 
+    alter table member_tb 
+       add column del_date datetime(6)
+2026-01-27T23:03:06.266+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table terms_tb 
+       add column del_date datetime(6)
+Hibernate: 
+    alter table terms_tb 
+       add column del_date datetime(6)
+2026-01-27T23:03:06.315+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table board_tb 
+       add constraint FKsgsykthl9gu9qdkp4gmo8fjr3 
+       foreign key (member_idx) 
+       references member_tb (id)
+Hibernate: 
+    alter table board_tb 
+       add constraint FKsgsykthl9gu9qdkp4gmo8fjr3 
+       foreign key (member_idx) 
+       references member_tb (id)
+2026-01-27T23:03:06.486+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table image_file_tb 
+       add constraint FK1pegnih20qcidqab7490g1cd8 
+       foreign key (board_id) 
+       references board_tb (id)
+Hibernate: 
+    alter table image_file_tb 
+       add constraint FK1pegnih20qcidqab7490g1cd8 
+       foreign key (board_id) 
+       references board_tb (id)
+2026-01-27T23:03:06.651+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table image_file_tb 
+       add constraint FKa55wmw9e02keffgpm16amskqo 
+       foreign key (member_id) 
+       references member_tb (id)
+Hibernate: 
+    alter table image_file_tb 
+       add constraint FKa55wmw9e02keffgpm16amskqo 
+       foreign key (member_id) 
+       references member_tb (id)
+2026-01-27T23:03:06.841+09:00  INFO 25616 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-27T23:03:07.442+09:00  INFO 25616 --- [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-27T23:03:09.371+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: MVConfig.bCryptPasswordEncoder() / 반환값: org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder@5068a2b1
+2026-01-27T23:03:09.827+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: MVConfig.addInterceptors(..) / 반환값: null
+2026-01-27T23:03:09.837+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: MVConfig.addCorsMappings(..) / 반환값: null
+2026-01-27T23:03:10.035+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: MVConfig.addResourceHandlers(..) / 반환값: null
+2026-01-27T23:03:10.055+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: MVConfig.addArgumentResolvers(..) / 반환값: null
+2026-01-27T23:03:10.146+09:00  WARN 25616 --- [    Test worker] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-01-27T23:03:10.423+09:00  INFO 25616 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : Started NationwideServerApplicationTests in 8.219 seconds (process running for 9.628)
+2026-01-27T23:03:10.475+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    select
+        count(*) 
+    from
+        terms_tb t1_0
+Hibernate: 
+    select
+        count(*) 
+    from
+        terms_tb t1_0
+2026-01-27T23:03:10.495+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: CrudRepository.count() / 반환값: 3
+2026-01-27T23:03:10.509+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    select
+        t1_0.id,
+        t1_0.content,
+        t1_0.del_date,
+        t1_0.is_required,
+        t1_0.title 
+    from
+        terms_tb t1_0
+Hibernate: 
+    select
+        t1_0.id,
+        t1_0.content,
+        t1_0.del_date,
+        t1_0.is_required,
+        t1_0.title 
+    from
+        terms_tb t1_0
+2026-01-27T23:03:10.530+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: ListCrudRepository.findAll() / 반환값: [Terms(id=1, title=서비스 이용 약관, content=이용 약관 내용 예시입니다., isRequired=true, delDate=null), Terms(id=2, title=개인정보 처리 방침, content=개인정보 처리 방침 내용 예시입니다., isRequired=true, delDate=null), Terms(id=3, title=마케팅 정보 수신 동의, content=마케팅 정보 수신 동의 내용 예시입니다., isRequired=false, delDate=null)]
+2026-01-27T23:03:10.534+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    select
+        count(*) 
+    from
+        member_tb m1_0
+Hibernate: 
+    select
+        count(*) 
+    from
+        member_tb m1_0
+2026-01-27T23:03:10.599+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: CrudRepository.count() / 반환값: 4
+2026-01-27T23:03:10.602+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    select
+        m1_0.id,
+        m1_0.address,
+        m1_0.address_detail,
+        m1_0.address_number,
+        m1_0.birth,
+        m1_0.created_at,
+        m1_0.date,
+        m1_0.del_date,
+        m1_0.gender,
+        m1_0.is_email_verified,
+        m1_0.is_phone_verified,
+        m1_0.login_id,
+        m1_0.login_type,
+        m1_0.name,
+        m1_0.nick_name,
+        m1_0.password,
+        m1_0.phone_number,
+        m1_0.profile_image,
+        m1_0.user_role 
+    from
+        member_tb m1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.address,
+        m1_0.address_detail,
+        m1_0.address_number,
+        m1_0.birth,
+        m1_0.created_at,
+        m1_0.date,
+        m1_0.del_date,
+        m1_0.gender,
+        m1_0.is_email_verified,
+        m1_0.is_phone_verified,
+        m1_0.login_id,
+        m1_0.login_type,
+        m1_0.name,
+        m1_0.nick_name,
+        m1_0.password,
+        m1_0.phone_number,
+        m1_0.profile_image,
+        m1_0.user_role 
+    from
+        member_tb m1_0
+2026-01-27T23:03:10.613+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: ListCrudRepository.findAll() / 반환값: [Member(id=1, name=관리자, nickName=AdminMaster, loginId=admin, password=$2a$10$NhjhW0XttrFgKshcI52SUuc.gytYZxON8ujDalsm1UKXs5HdA5r.6, phoneNumber=010-0000-0000, gender=MALE, birth=1990, date=01-01, addressNumber=12345, address=서울시 강남구, addressDetail=1층, profileImage=/uploads/member-images/profile_admin.png, loginType=LOCAL, createdAt=2025-12-27 19:17:52.189422, userRole=ADMIN, delDate=null, isEmailVerified=true, isPhoneVerified=true), Member(id=2, name=정우, nickName=JJW, loginId=user1, password=$2a$10$NhjhW0XttrFgKshcI52SUuc.gytYZxON8ujDalsm1UKXs5HdA5r.6, phoneNumber=010-1111-1111, gender=MALE, birth=1995, date=05-20, addressNumber=54321, address=부산시 해운대구, addressDetail=101호, profileImage=/uploads/member-images/profile.png, loginType=LOCAL, createdAt=2025-12-27 19:17:52.19542, userRole=USER, delDate=null, isEmailVerified=true, isPhoneVerified=false), Member(id=3, name=민지, nickName=MJ, loginId=user2, password=$2a$10$NhjhW0XttrFgKshcI52SUuc.gytYZxON8ujDalsm1UKXs5HdA5r.6, phoneNumber=010-2222-2222, gender=FEMALE, birth=1998, date=12-10, addressNumber=67890, address=서울시 송파구, addressDetail=201호, profileImage=/uploads/member-images/profile.png, loginType=LOCAL, createdAt=2025-12-27 19:17:52.19642, userRole=USER, delDate=null, isEmailVerified=false, isPhoneVerified=false), Member(id=4, name=조정우, nickName=어드민, loginId=whwhwjddn123@gmail.com, password=$2a$10$muUubHpswk1sm8EWZ.hbC.Xc.I2V7mXs60Yzhvua4pXrOnp.C5OBK, phoneNumber=010-5207-6426, gender=MALE, birth=1999, date=0408, addressNumber=62316, address=광주 광산구 2순환로 2474, addressDetail=11, profileImage=/uploads/member-images/profile.png, loginType=null, createdAt=2025-12-27 21:12:51.132849, userRole=USER, delDate=null, isEmailVerified=true, isPhoneVerified=false)]
+2026-01-27T23:03:10.621+09:00 DEBUG 25616 --- [    Test worker] org.hibernate.SQL                        : 
+    select
+        count(*) 
+    from
+        member_terms_tb mt1_0
+Hibernate: 
+    select
+        count(*) 
+    from
+        member_terms_tb mt1_0
+2026-01-27T23:03:10.648+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: CrudRepository.count() / 반환값: 12
+2026-01-27T23:03:10.648+09:00  INFO 25616 --- [    Test worker] c.n.n.core.aop.LoggingAspect             : 메서드 종료: DataLoader.run(..) / 반환값: null
+</pre>
+</span>
+</div>
+<div class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>WARNING: A Java agent has been loaded dynamically (C:\Users\whwhw\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.14.17\e3c251a39dc90badaf71c83427ba46840f219d8d\byte-buddy-agent-1.14.17.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="https://www.gradle.org">Gradle 8.14.3</a> at 2026. 1. 27. 오후 11:03:12</p>
+</div>
+</div>
+</body>
+</html>
