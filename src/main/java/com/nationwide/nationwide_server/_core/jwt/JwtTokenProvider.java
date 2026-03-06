@@ -1,5 +1,6 @@
 package com.nationwide.nationwide_server._core.jwt;
 
+import com.nationwide.nationwide_server.image_file.ImageFile;
 import com.nationwide.nationwide_server.member.Member;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -49,7 +51,11 @@ public class JwtTokenProvider {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", member.getId());
         claims.put("name", member.getName());
-        claims.put("profileImage", member.getProfileImage());
+
+        String profileImagePath = member.getImageFiles().isEmpty()
+                ? null
+                : member.getImageFiles().getFirst().getImageFilePath();
+        claims.put("profileImage", profileImagePath);
 
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
@@ -96,12 +102,21 @@ public class JwtTokenProvider {
                     .parseSignedClaims(token)
                     .getPayload();
 
+            String profileImagePath = claims.get("profileImage", String.class);
+
+            ImageFile imageFile = profileImagePath != null
+                    ? ImageFile.builder().imageFilePath(profileImagePath).build()
+                    : null;
+
+
             // Claims에서 개별 필드를 꺼내서 Member 객체 생성
             Member member = new Member();
             member.setId(claims.get("id", Long.class));
             member.setLoginId(claims.getSubject());
             member.setName(claims.get("name", String.class));
-            member.setProfileImage(claims.get("profileImage", String.class));
+            if (imageFile != null) {
+                member.getImageFiles().add(imageFile);
+            }
 
             log.debug("회원 정보 추출 완료 - ID: {}", member.getId());
             return member;
@@ -110,12 +125,19 @@ public class JwtTokenProvider {
             log.warn("만료된 토큰에서 정보 추출 시도");
             // 만료된 토큰이라도 Claims는 추출 가능
             Claims claims = e.getClaims();
+            String profileImagePath = claims.get("profileImage", String.class);
+
+            ImageFile imageFile = profileImagePath != null
+                    ? ImageFile.builder().imageFilePath(profileImagePath).build()
+                    : null;
 
             Member member = new Member();
             member.setId(claims.get("id", Long.class));
             member.setLoginId(claims.getSubject());
             member.setName(claims.get("name", String.class));
-            member.setProfileImage(claims.get("profileImage", String.class));
+            if (imageFile != null) {
+                member.getImageFiles().add(imageFile);
+            }
 
             return member;
 

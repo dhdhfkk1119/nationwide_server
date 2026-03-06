@@ -13,6 +13,11 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+  upload:
+    root-dir: ./uploads/
+    image-dir: image/
+    member-dir: member-images/
+    community-dir: community-images/
 
 
   jpa:
@@ -23,6 +28,7 @@ spring:
     properties:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+      default_batch_fetch_size: 100
 
   #SMPT 이메일 인증
   mail:
@@ -46,7 +52,3 @@ logging:
 jwt:
   access-expiration-ms: 3600000
   refresh-expiration-ms: 604800000
-
-file:
-  upload:
-    path: uploads/

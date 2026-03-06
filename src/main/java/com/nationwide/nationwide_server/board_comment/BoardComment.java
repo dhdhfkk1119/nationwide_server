@@ -31,8 +31,6 @@ public class BoardComment {
     @JoinColumn(name = "board_idx")
     private Board board;
 
-    private Long
-
     @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name = "member_idx")
     private Member member;

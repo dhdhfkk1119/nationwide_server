@@ -48,11 +48,15 @@ public class JwtInterceptor implements HandlerInterceptor {
 
             Member member = jwtTokenProvider.getClaimsMember(token);
 
+            String profileImage = member.getImageFiles().isEmpty()
+                    ? null
+                    : member.getImageFiles().getFirst().getImageFilePath();
+
             SessionUser sessionUser = new SessionUser(
                     member.getId(),
                     member.getLoginId(),
                     member.getName(),
-                    member.getProfileImage()
+                    profileImage
             );
 
             log.info("✅ 토큰 검증 성공: 사용자 ID = {}, 이름 = {}", sessionUser.getId(), sessionUser.getName());

@@ -1,5 +1,7 @@
 package com.nationwide.nationwide_server._core.mockdata;
 
+import com.nationwide.nationwide_server._core._enum.FileDBType;
+import com.nationwide.nationwide_server.image_file.ImageFile;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.MemberRepository;
 import com.nationwide.nationwide_server.member.m_enum.Gender;
@@ -76,7 +78,12 @@ public class DataLoader implements CommandLineRunner {
                     .addressNumber("12345")
                     .address("서울시 강남구")
                     .addressDetail("1층")
-                    .profileImage("/uploads/member-images/profile_admin.png")
+                    .imageFiles(List.of(
+                            ImageFile.builder()
+                                    .imageFilePath("/uploads/member-images/profile_admin.png")
+                                    .fileDbType(FileDBType.MEMBER)
+                                    .build()
+                    ))
                     .loginType(LoginType.LOCAL)
                     .userRole(UserRole.ADMIN)
                     .isEmailVerified(true)
@@ -95,7 +102,12 @@ public class DataLoader implements CommandLineRunner {
                     .addressNumber("54321")
                     .address("부산시 해운대구")
                     .addressDetail("101호")
-                    .profileImage("/uploads/member-images/profile.png")
+                    .imageFiles(List.of(
+                            ImageFile.builder()
+                                    .imageFilePath("/uploads/member-images/profile_admin.png")
+                                    .fileDbType(FileDBType.MEMBER)
+                                    .build()
+                    ))
                     .loginType(LoginType.LOCAL)
                     .userRole(UserRole.USER)
                     .isEmailVerified(true)
@@ -114,7 +126,12 @@ public class DataLoader implements CommandLineRunner {
                     .addressNumber("67890")
                     .address("서울시 송파구")
                     .addressDetail("201호")
-                    .profileImage("/uploads/member-images/profile.png")
+                    .imageFiles(List.of(
+                            ImageFile.builder()
+                                    .imageFilePath("/uploads/member-images/profile_admin.png")
+                                    .fileDbType(FileDBType.MEMBER)
+                                    .build()
+                    ))
                     .loginType(LoginType.LOCAL)
                     .userRole(UserRole.USER)
                     .isEmailVerified(false)
