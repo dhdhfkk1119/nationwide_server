@@ -7,14 +7,13 @@ import com.nationwide.nationwide_server._core._enum.ResourceType;
 import com.nationwide.nationwide_server._core.util.ApiUtil;
 import com.nationwide.nationwide_server._core.util.SessionUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.awt.print.Pageable;
 import java.util.List;
 
 @RequiredArgsConstructor

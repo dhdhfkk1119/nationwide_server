@@ -11,15 +11,14 @@ import org.springframework.data.repository.query.Param;
 public interface BoardCommentRepository extends JpaRepository<BoardComment, Long> {
     @Query("SELECT bc FROM BoardComment bc " +
             "JOIN FETCH bc.member " +
-            "WHERE bc.board.id = :boardIdx AND bc.delDate IS NULL " +
-            "ORDER BY bc.boardCommentIdx DESC")
-    Slice<BoardComment> findCommentSlice(Long boardIdx , Pageable pageable);
+            "WHERE bc.board.id = :boardIdx AND bc.delDate IS NULL ")
+    Slice<BoardComment> findCommentSlice(@Param("boardIdx") Long boardIdx, Pageable pageable);
 
     @Query("SELECT COUNT(bc) FROM BoardComment bc WHERE bc.board.id = :boardIdx")
     Long countCommentByBoardIdx(Long boardIdx);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE BoardComment bc SET bc.delDate = CURRENT_TIMESTAMP WHERE bc.commentIdx = :commentIdx")
-    int deleteByIdSoft(@Param("boardIdx") Long commentIdx);
+    @Query("UPDATE BoardComment bc SET bc.delDate = CURRENT_TIMESTAMP WHERE bc.boardCommentIdx = :commentIdx")
+    int deleteByIdSoft(@Param("commentIdx") Long commentIdx);
 
 }

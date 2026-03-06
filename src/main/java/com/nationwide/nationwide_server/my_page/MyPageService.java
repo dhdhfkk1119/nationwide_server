@@ -11,10 +11,10 @@ import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @Service

@@ -1,8 +1,12 @@
 package com.nationwide.nationwide_server.board_comment_like;
 
+import com.nationwide.nationwide_server._core._enum.ErrorCode;
+import com.nationwide.nationwide_server._core.errors.exception.Exception404;
 import com.nationwide.nationwide_server.board.Board;
+import com.nationwide.nationwide_server.board.BoardRepository;
 import com.nationwide.nationwide_server.board.BoardService;
 import com.nationwide.nationwide_server.board_comment.BoardComment;
+import com.nationwide.nationwide_server.board_comment.BoardCommentRepository;
 import com.nationwide.nationwide_server.board_comment.BoardCommentService;
 import com.nationwide.nationwide_server.board_comment.dto.BoardCommentRequestDTO;
 import com.nationwide.nationwide_server.board_comment_like.dto.BoardCommentLikeRequestDTO;
@@ -18,9 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BoardCommentLikeService {
     private final BoardCommentLikeRepository boardCommentLikeRepository;
-    private final BoardCommentService boardCommentService;
+    private final BoardCommentRepository boardCommentRepository;
     private final MemberService memberService;
-    private final BoardService boardService;
+    private final BoardRepository boardRepository;
 
     // 좋아요 수
     public Long commentLikeCnt(Long boardCommentIdx){
@@ -34,9 +38,9 @@ public class BoardCommentLikeService {
 
     public void toggleCommentLike(Long boardIdx, Long boardCommentIdx, Long memberIdx){
         BoardCommentLike boardCommentLike = boardCommentLikeRepository.findByBoardIdAndMemberId(boardCommentIdx,memberIdx);
-        BoardComment boardComment = boardCommentService.findByCommentIdx(boardCommentIdx);
+        BoardComment boardComment = boardCommentRepository.findById(boardCommentIdx).orElseThrow(() -> new Exception404(ErrorCode.COMMENT_NOT_FOUND.getMessage()));
         Member member = memberService.findById(memberIdx);
-        Board board = boardService.findByBoard(boardIdx);
+        Board board = boardRepository.findById(boardIdx).orElseThrow(() -> new Exception404(ErrorCode.BOARD_NOT_FOUND.getMessage()));
         if(boardCommentLike == null){
             BoardCommentLikeRequestDTO dto = new BoardCommentLikeRequestDTO();
             boardCommentLikeRepository.save(dto.toEntity(board,boardComment,member));

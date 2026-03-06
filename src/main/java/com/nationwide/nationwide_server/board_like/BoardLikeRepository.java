@@ -10,7 +10,7 @@ public interface BoardLikeRepository extends JpaRepository<BoardLike,Long> {
     boolean existsByBoardIdAndMemberId(Long boardId, Long memberId);
     
     // 내가 게시판을 좋아요 눌렀는지 확인 BoardLike 토글용
-    @Query("SELECT * FROM BoardLike bl WHERE bl.board.id = :boardId AND bl.member.id = :memberId")
+    @Query("SELECT bl FROM BoardLike bl WHERE bl.board.id = :boardId AND bl.member.id = :memberId")
     BoardLike findByBoardIdAndMemberId(Long boardId, Long memberId);
 
     // 좋아요 갯수

@@ -5,12 +5,11 @@ import com.nationwide.nationwide_server._core._custom_annotation.LoginUser;
 import com.nationwide.nationwide_server._core.util.ApiUtil;
 import com.nationwide.nationwide_server._core.util.SessionUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.awt.print.Pageable;
 
 @RestController("/api/my-page")
 @RequiredArgsConstructor

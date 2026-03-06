@@ -3,6 +3,7 @@ package com.nationwide.nationwide_server.image_file;
 import com.nationwide.nationwide_server.board.Board;
 import com.nationwide.nationwide_server._core._enum.FileDBType;
 import com.nationwide.nationwide_server._core.util.TimeFormatUtil;
+import com.nationwide.nationwide_server.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +36,10 @@ public class ImageFile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

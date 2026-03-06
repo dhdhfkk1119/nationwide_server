@@ -1,7 +1,10 @@
 package com.nationwide.nationwide_server.board_like;
 
+import com.nationwide.nationwide_server._core._enum.ErrorCode;
 import com.nationwide.nationwide_server._core._enum.ResourceType;
+import com.nationwide.nationwide_server._core.errors.exception.Exception404;
 import com.nationwide.nationwide_server.board.Board;
+import com.nationwide.nationwide_server.board.BoardRepository;
 import com.nationwide.nationwide_server.board.BoardService;
 import com.nationwide.nationwide_server.board_like.dto.BoardLikeRequestDTO;
 import com.nationwide.nationwide_server._core.util.SessionUser;
@@ -17,12 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardLikeService {
 
     private final BoardLikeRepository boardLikeRepository;
-    private final BoardService boardService;
+    private final BoardRepository boardRepository;
     private final MemberService memberService;
 
     @Transactional
     public String toggleBoardLike(SessionUser sessionUser, Long boardIdx){
-        Board board = boardService.findByBoard(boardIdx);
+        Board board = boardRepository.findById(boardIdx)
+                .orElseThrow(() -> new Exception404(ErrorCode.BOARD_NOT_FOUND.getMessage()));
         Member member = memberService.findById(sessionUser.getId());
 
         // 게시판 좋아요 있는 체크 있으면 -> 삭제
