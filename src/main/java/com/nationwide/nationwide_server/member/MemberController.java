@@ -65,6 +65,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiUtil.success(dto));
     }
 
+    // 유저 정보 업데이트
     @PutMapping("/update/{memberIdx}")
     public ResponseEntity<?> updateMember(@LoginUser SessionUser sessionUser,
                                           @PathVariable("memberIdx") Long memberIdx,
