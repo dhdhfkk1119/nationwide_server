@@ -5,11 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "upload")
+@ConfigurationProperties(prefix = "spring.upload")
 @Data
 public class UploadProperties {
-    private String imageDir;
-    private String memberDir;
-    private String communityDir;
-    private String rootDir;
+    private String imageDir = "image/";
+    private String memberDir = "member-images/";
+    private String communityDir = "community-images/";
+    private String rootDir = "./uploads/";
 }

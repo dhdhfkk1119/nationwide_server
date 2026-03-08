@@ -8,10 +8,7 @@ import com.nationwide.nationwide_server.member.m_enum.Gender;
 import com.nationwide.nationwide_server.member.m_enum.LoginType;
 import com.nationwide.nationwide_server.member.m_enum.UserRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "member_tb")
+@ToString(exclude = {"imageFiles"})
 public class Member implements ImageOwner {
 
     @Id

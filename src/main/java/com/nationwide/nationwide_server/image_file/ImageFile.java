@@ -5,10 +5,7 @@ import com.nationwide.nationwide_server._core._enum.FileDBType;
 import com.nationwide.nationwide_server._core.util.TimeFormatUtil;
 import com.nationwide.nationwide_server.member.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,6 +18,7 @@ import java.util.UUID;
 @Table(name = "image_file_tb")
 @Entity
 @Builder
+@ToString(exclude = {"board", "member"})
 public class ImageFile {
 
     @Id

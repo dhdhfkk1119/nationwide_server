@@ -20,11 +20,7 @@ public class MVConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
     private final LoginUserArgumentResolver loginUserArgumentResolver;
-
-
-    // 파일 업로드 경로 (application.properties에서 설정)
     private final UploadProperties uploadProperties;
-
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -41,7 +37,6 @@ public class MVConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .maxAge(3600);
 
-        // 업로드 파일도 CORS 허용
         registry.addMapping("/uploads/**")
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET")
@@ -59,19 +54,15 @@ public class MVConfig implements WebMvcConfigurer {
                         "/api/terms/list",
                         "/api/emails/**",
                         "/api/terms/**",
-                        "/api/boards/list",
-                        "/api/boards/detail/**",
-                        "/uploads/**"  // 정적 파일은 인터셉터 제외
+                        "/uploads/**"
                 );
     }
 
-    // 세션 유저 정보 가져오기
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(loginUserArgumentResolver);
     }
 
-    // 정적 파일 제공 설정
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
