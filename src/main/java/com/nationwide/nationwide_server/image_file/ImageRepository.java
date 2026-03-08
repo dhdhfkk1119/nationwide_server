@@ -15,6 +15,4 @@ public interface ImageRepository extends JpaRepository<ImageFile,String> {
     @Query("SELECT i FROM ImageFile i WHERE i.imageFileId = :imageFileId")
     ImageFile findByOneImageFileId(String imageFileId);
 
-
-
 }

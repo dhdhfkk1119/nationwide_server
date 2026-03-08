@@ -152,8 +152,7 @@ public class MemberService {
         Member member = findById(memberId);
 
         List<ImageResponseDTO> imageFileDTOs = member.getImageFiles().stream()
-                .map(imageFile -> imageFileService.imageFileDetailListInfo(imageFile.getImageFileId()))
-                .flatMap(List::stream)
+                .map(ImageResponseDTO::new)
                 .toList();
 
 

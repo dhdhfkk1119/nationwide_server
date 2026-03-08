@@ -91,7 +91,6 @@ public class MemberResponseDTO {
         private String accessToken;
         private String refreshToken;
         private Long expiresIn;
-
         private Long id;
         private String name;
         private String nickName;
@@ -122,6 +121,7 @@ public class MemberResponseDTO {
             this.date = member.getDate();
             this.addressInfo = member.getAddress() + member.getAddressDetail() + member.getAddressNumber();
             this.addressNumber = member.getAddressNumber();
+            this.thumbnailProfileImagePath = thumbnailProfileImagePath;
         }
     }
 }

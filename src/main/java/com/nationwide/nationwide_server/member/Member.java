@@ -83,7 +83,8 @@ public class Member implements ImageOwner {
 
     @Override
     public void addImageFile(ImageFile imageFile){
-        this.imageFiles = imageFiles;
+        this.imageFiles.add(imageFile);
+        imageFile.setMember(this);
     }
 
     public void updateMember(MemberRequestDTO.UpdateDTO dto){
