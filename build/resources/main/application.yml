@@ -50,5 +50,6 @@ logging:
     org.hibernate.SQL: debug
 
 jwt:
+  secret: your-very-long-jwt-secret-key-at-least-32-characters
   access-expiration-ms: 3600000
   refresh-expiration-ms: 604800000

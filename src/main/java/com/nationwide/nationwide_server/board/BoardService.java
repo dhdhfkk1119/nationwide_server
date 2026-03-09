@@ -77,16 +77,16 @@ public class BoardService {
     // 게시물 리스트 정보
     public Slice<BoardResponseDTO.ListDTO> findByBoardList(@LoginUser SessionUser sessionUser, Pageable pageable) {
         Slice<Board> boards = boardRepository.findSlice(pageable);
-        Member member = memberService.findById(sessionUser.getId());
+        Long loginMemberId = sessionUser != null ? sessionUser.getId() : null;
 
         return boards.map(board -> {
             Long likeCnt = boardLikeService.likeCnt(board.getId());
-            boolean isLike = boardLikeService.existsByBoardIdAndMemberId(board.getId(),member.getId());
+            boolean isLike = loginMemberId != null &&
+                    boardLikeService.existsByBoardIdAndMemberId(board.getId(), loginMemberId);
             Long commentCnt = boardCommentService.countCommentByBoardIdx(board.getId());
             List<ImageResponseDTO> imageFileDTOs = board.getImageFiles().stream()
                     .map(imageFile -> new ImageResponseDTO(imageFile)) // 직접 변환 권장
                     .toList();
-
 
             return BoardResponseDTO.ListDTO.of(sessionUser, board,likeCnt,commentCnt, imageFileDTOs,isLike);
         });

@@ -84,13 +84,12 @@ public class BoardResponseDTO {
             dto.title = board.getTitle();
             dto.content = board.getContent();
             dto.viewCnt = board.getViewCnt();
-            dto.isMine = board.getIsMine(sessionUser.getId());
             dto.isLiked = isLiked;
             dto.likeCnt = likeCnt;
             dto.commentCnt = commentCnt;
             dto.createdAt = board.getCreatedTime();
             dto.updatedAt = board.getUpdatedTime();
-            dto.isMine = sessionUser.getId().equals(board.getMember().getId());
+            dto.isMine = sessionUser != null && sessionUser.getId().equals(board.getMember().getId());
             dto.imagePath = imageFiles.stream()
                     .map(ImageResponseDTO::getImageFilePath)
                     .toList();

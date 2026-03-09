@@ -51,6 +51,7 @@ public class MVConfig implements WebMvcConfigurer {
                         "/api/member/save",
                         "/api/member/check-email/**",
                         "/api/member/login",
+                        "/api/boards/list",
                         "/api/terms/list",
                         "/api/emails/**",
                         "/api/terms/**",
