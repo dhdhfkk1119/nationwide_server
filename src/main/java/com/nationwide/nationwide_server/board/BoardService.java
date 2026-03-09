@@ -2,6 +2,7 @@ package com.nationwide.nationwide_server.board;
 
 import com.nationwide.nationwide_server.board.dto.BoardRequestDTO;
 import com.nationwide.nationwide_server.board.dto.BoardResponseDTO;
+import com.nationwide.nationwide_server.board_view.BoardViewService;
 import com.nationwide.nationwide_server.board_comment.BoardCommentService;
 import com.nationwide.nationwide_server.board_comment.dto.BoardCommentResponseDTO;
 import com.nationwide.nationwide_server.board_like.BoardLikeService;
@@ -36,6 +37,7 @@ public class BoardService {
     private final ImageFileService imageFileService;
     private final BoardLikeService boardLikeService;
     private final BoardCommentService boardCommentService;
+    private final BoardViewService boardViewService;
 
     // 게시물 작성
     @Transactional
@@ -59,6 +61,13 @@ public class BoardService {
     public BoardResponseDTO.DetailDTO findByBoardId(@LoginUser SessionUser sessionUser, Long boardIdx){
         Board board = findByBoard(boardIdx);
         Member member = memberService.findById(sessionUser.getId());
+
+        boolean shouldIncreaseViewCnt = boardViewService.shouldIncreaseViewCnt(board, member);
+        if (shouldIncreaseViewCnt) {
+            boardRepository.incrementViewCnt(board.getId());
+            board = findByBoard(boardIdx);
+        }
+
         boolean isLike = boardLikeService.existsByBoardIdAndMemberId(board.getId(),member.getId());
         Long likeCnt = boardLikeService.likeCnt(boardIdx);
         Long commentCnt = boardCommentService.countCommentByBoardIdx(boardIdx);
@@ -68,8 +77,6 @@ public class BoardService {
                 .map(imageFile -> imageFileService.imageFileDetailListInfo(imageFile.getImageFileId()))
                 .flatMap(List::stream)
                 .toList();
-
-        board.setViewCnt(board.getViewCnt() + 1);
 
         return BoardResponseDTO.DetailDTO.of(sessionUser,board,likeCnt,commentCnt,boardCommentSlice,imageFileDTOs,isLike);
     }

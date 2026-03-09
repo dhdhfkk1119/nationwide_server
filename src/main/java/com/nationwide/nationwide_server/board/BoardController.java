@@ -7,6 +7,7 @@ import com.nationwide.nationwide_server._core.util.SessionUser;
 import com.nationwide.nationwide_server.board.dto.BoardRequestDTO;
 import com.nationwide.nationwide_server.board.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
@@ -27,16 +28,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/boards")
+@Slf4j
 public class BoardController {
 
     private final BoardService boardService;
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("/detail/{boardId}")
     public ResponseEntity<?> findByBoard(
-            @PathVariable("id") Long boardIdx,
+            @PathVariable("boardId") Long boardId,
             @LoginUser SessionUser sessionUser
     ) {
-        BoardResponseDTO.DetailDTO dto = boardService.findByBoardId(sessionUser, boardIdx);
+        log.info("boardId 데이터 찍힘 확인={}", boardId);
+        BoardResponseDTO.DetailDTO dto = boardService.findByBoardId(sessionUser, boardId);
         return ResponseEntity.ok(ApiUtil.success(dto));
     }
 

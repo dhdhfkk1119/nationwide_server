@@ -34,7 +34,8 @@ public class Board implements ImageOwner {
     private String title;
     private String content;
 
-    private Long viewCnt;
+    @Builder.Default
+    private Long viewCnt = 0L;
 
     // 이미지 파일 이름 저장
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -84,6 +85,13 @@ public class Board implements ImageOwner {
 
     public boolean getIsMine(Long memberIdx){
         return this.getMember().getIsMine(memberIdx);
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (viewCnt == null) {
+            viewCnt = 0L;
+        }
     }
 
 }

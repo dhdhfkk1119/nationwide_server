@@ -18,6 +18,10 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     @Query("UPDATE Board b SET b.delDate = CURRENT_TIMESTAMP WHERE b.id = :boardIdx")
     int deleteByIdSoft(@Param("boardIdx") Long boardIdx);
 
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE Board b SET b.viewCnt = COALESCE(b.viewCnt, 0) + 1 WHERE b.id = :boardId")
+    int incrementViewCnt(@Param("boardId") Long boardId);
+
     // 내가 좋아요 누른 게시판 목록
     @Query("SELECT b FROM Board b " +
             "JOIN FETCH b.member " +
