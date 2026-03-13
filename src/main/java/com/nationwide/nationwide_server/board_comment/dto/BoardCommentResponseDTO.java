@@ -17,24 +17,37 @@ public class BoardCommentResponseDTO {
     private Long memberIdx;
     private String name;
     private String nickName;
+    private String profileImage;
     private String content;
     private Long commentLikeCnt;
     private boolean isMine;
+    private boolean isLike;
     private String createdTime;
     private String updatedTime;
 
-    public BoardCommentResponseDTO fromEntity(Board board, BoardComment boardComment,Long commentLikeCnt, Member member){
-        return new BoardCommentResponseDTO(
-                this.boardIdx = board.getId(),
-                this.boardCommentIdx = boardComment.getBoardCommentIdx(),
-                this.memberIdx = member.getId(),
-                this.name = member.getName(),
-                this.nickName = member.getNickName(),
-                this.content = boardComment.getContent(),
-                this.commentLikeCnt = commentLikeCnt,
-                this.isMine = boardComment.getIsMine(member.getId()),
-                this.createdTime = boardComment.getCreatedTime(),
-                this.updatedTime = boardComment.getUpdatedTime()
-        );
+    public BoardCommentResponseDTO fromEntity(
+            Board board,
+            BoardComment boardComment,
+            boolean isLike,
+            Long memberIdx,
+            Long commentLikeCnt,
+            Member member
+    ) {
+        BoardCommentResponseDTO dto = new BoardCommentResponseDTO();
+        dto.boardIdx = board.getId();
+        dto.boardCommentIdx = boardComment.getBoardCommentIdx();
+        dto.memberIdx = member.getId();
+        dto.name = member.getName();
+        dto.nickName = member.getNickName();
+        dto.profileImage = member.getImageFiles().isEmpty()
+                ? "/uploads/member-images/profile.png"
+                : member.getImageFiles().get(0).getImageFilePath();
+        dto.content = boardComment.getContent();
+        dto.commentLikeCnt = commentLikeCnt;
+        dto.isMine = boardComment.getIsMine(memberIdx);
+        dto.isLike = isLike;
+        dto.createdTime = boardComment.getCreatedTime();
+        dto.updatedTime = boardComment.getUpdatedTime();
+        return dto;
     }
 }

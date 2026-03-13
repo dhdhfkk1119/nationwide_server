@@ -1,6 +1,5 @@
 package com.nationwide.nationwide_server.board_comment;
 
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +10,8 @@ import org.springframework.data.repository.query.Param;
 public interface BoardCommentRepository extends JpaRepository<BoardComment, Long> {
     @Query("SELECT bc FROM BoardComment bc " +
             "JOIN FETCH bc.member " +
-            "WHERE bc.board.id = :boardIdx AND bc.delDate IS NULL ")
+            "WHERE bc.board.id = :boardIdx AND bc.delDate IS NULL " +
+            "ORDER BY bc.boardCommentIdx DESC")
     Slice<BoardComment> findCommentSlice(@Param("boardIdx") Long boardIdx, Pageable pageable);
 
     @Query("SELECT COUNT(bc) FROM BoardComment bc WHERE bc.board.id = :boardIdx")
@@ -21,4 +21,15 @@ public interface BoardCommentRepository extends JpaRepository<BoardComment, Long
     @Query("UPDATE BoardComment bc SET bc.delDate = CURRENT_TIMESTAMP WHERE bc.boardCommentIdx = :commentIdx")
     int deleteByIdSoft(@Param("commentIdx") Long commentIdx);
 
+    @Query("SELECT bc FROM BoardComment bc " +
+            "JOIN FETCH bc.member " +
+            "JOIN FETCH bc.board b " +
+            "JOIN FETCH b.member " +
+            "WHERE bc.member.id = :memberIdx AND bc.delDate IS NULL " +
+            "ORDER BY bc.boardCommentIdx DESC")
+    Slice<BoardComment> findByMemberId(@Param("memberIdx") Long memberIdx, Pageable pageable);
+
+    @Query("SELECT COUNT(bc) FROM BoardComment bc WHERE bc.member.id = :memberIdx AND bc.delDate IS NULL")
+    Long countByMemberId(@Param("memberIdx") Long memberIdx);
+    
 }

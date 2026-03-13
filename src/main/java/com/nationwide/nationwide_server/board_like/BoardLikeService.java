@@ -3,9 +3,9 @@ package com.nationwide.nationwide_server.board_like;
 import com.nationwide.nationwide_server._core._enum.ErrorCode;
 import com.nationwide.nationwide_server._core._enum.ResourceType;
 import com.nationwide.nationwide_server._core.errors.exception.Exception404;
+import com.nationwide.nationwide_server.alarm.AlarmService;
 import com.nationwide.nationwide_server.board.Board;
 import com.nationwide.nationwide_server.board.BoardRepository;
-import com.nationwide.nationwide_server.board.BoardService;
 import com.nationwide.nationwide_server.board_like.dto.BoardLikeRequestDTO;
 import com.nationwide.nationwide_server._core.util.SessionUser;
 import com.nationwide.nationwide_server.member.Member;
@@ -22,6 +22,7 @@ public class BoardLikeService {
     private final BoardLikeRepository boardLikeRepository;
     private final BoardRepository boardRepository;
     private final MemberService memberService;
+    private final AlarmService alarmService;
 
     @Transactional
     public String toggleBoardLike(SessionUser sessionUser, Long boardIdx){
@@ -35,6 +36,7 @@ public class BoardLikeService {
         if(boardLike == null){
             BoardLikeRequestDTO dto = new BoardLikeRequestDTO();
             boardLikeRepository.save(dto.toEntity(board,member));
+            alarmService.createBoardLikeAlarm(member, board);
         }else {
             boardLikeRepository.delete(boardLike);
 

@@ -5,8 +5,10 @@ import com.nationwide.nationwide_server._core.errors.exception.Exception401;
 import com.nationwide.nationwide_server._core.errors.exception.Exception404;
 import com.nationwide.nationwide_server._core.jwt.JwtTokenProvider;
 import com.nationwide.nationwide_server._core.util.SessionUser;
+import com.nationwide.nationwide_server.board.BoardRepository;
 import com.nationwide.nationwide_server.email.EmailRepository;
 import com.nationwide.nationwide_server.email.EmailService;
+import com.nationwide.nationwide_server.follow.FollowRepository;
 import com.nationwide.nationwide_server.image_file.ImageFile;
 import com.nationwide.nationwide_server.image_file.ImageFileService;
 import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
@@ -42,6 +44,8 @@ public class MemberService {
     private final TermsRepository termsRepository;
     private final ImageFileService imageFileService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final BoardRepository boardRepository;
+    private final FollowRepository followRepository;
 
     // 회원 가입
     @Transactional
@@ -154,9 +158,18 @@ public class MemberService {
         List<ImageResponseDTO> imageFileDTOs = member.getImageFiles().stream()
                 .map(ImageResponseDTO::new)
                 .toList();
+        Long boardCnt = boardRepository.countByMemberId(memberId);
+        Long followerCnt = followRepository.countFollowersByMemberId(memberId);
+        Long followingCnt = followRepository.countFollowingByMemberId(memberId);
 
 
-        return new MemberResponseDTO.DetailDTO(member, imageFileDTOs);
+        return new MemberResponseDTO.DetailDTO(
+                member,
+                imageFileDTOs,
+                boardCnt,
+                followerCnt,
+                followingCnt
+        );
     }
 
 

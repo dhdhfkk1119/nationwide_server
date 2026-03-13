@@ -10,7 +10,7 @@ import java.util.List;
 public class MemberResponseDTO {
 
     @Data
-    public static class DetailDTO{
+    public static class DetailDTO {
         private Long memberIdx;
         private String name;
         private String nickName;
@@ -20,13 +20,21 @@ public class MemberResponseDTO {
         private String birth;
         private String date;
         private String addressInfo;
+        private String bio;
         private String thumbnailProfileImagePath;
         private List<String> profileImagePath;
         private List<String> imageFilesId;
+        private Long boardCnt;
+        private Long followerCnt;
+        private Long followingCnt;
 
-
-
-        public DetailDTO(Member member, List<ImageResponseDTO> imageFiles){
+        public DetailDTO(
+                Member member,
+                List<ImageResponseDTO> imageFiles,
+                Long boardCnt,
+                Long followerCnt,
+                Long followingCnt
+        ) {
             this.memberIdx = member.getId();
             this.name = member.getName();
             this.nickName = member.getNickName();
@@ -36,19 +44,25 @@ public class MemberResponseDTO {
             this.birth = member.getBirth();
             this.date = member.getDate();
             this.addressInfo = member.getAddress() + member.getAddressDetail() + member.getAddressNumber();
+            this.bio = member.getBio();
             this.thumbnailProfileImagePath = imageFiles.stream()
-                    .map(ImageResponseDTO::getImageFilePath).findFirst().orElse("등록된 썸네일 이미지가 없습니다");
+                    .map(ImageResponseDTO::getImageFilePath)
+                    .findFirst()
+                    .orElse("/uploads/member-images/profile.png");
             this.profileImagePath = imageFiles.stream()
                     .map(ImageResponseDTO::getImageFilePath)
                     .toList();
             this.imageFilesId = imageFiles.stream()
                     .map(ImageResponseDTO::getImageFileId)
                     .toList();
+            this.boardCnt = boardCnt;
+            this.followerCnt = followerCnt;
+            this.followingCnt = followingCnt;
         }
     }
 
     @Data
-    public static class ListDTO{
+    public static class ListDTO {
         private String name;
         private String nickName;
         private String phoneNumber;
@@ -60,12 +74,12 @@ public class MemberResponseDTO {
         private String address;
         private String addressDetail;
         private String addressInfo;
+        private String bio;
         private String thumbnailProfileImagePath;
         private List<String> profileImagePath;
         private List<String> imageFilesId;
 
-
-        public ListDTO(Member member,List<ImageResponseDTO> imageFiles){
+        public ListDTO(Member member, List<ImageResponseDTO> imageFiles) {
             this.name = member.getName();
             this.nickName = member.getNickName();
             this.phoneNumber = member.getPhoneNumber();
@@ -74,8 +88,11 @@ public class MemberResponseDTO {
             this.birth = member.getBirth();
             this.date = member.getDate();
             this.addressInfo = member.getAddress() + member.getAddressDetail() + member.getAddressNumber();
+            this.bio = member.getBio();
             this.thumbnailProfileImagePath = imageFiles.stream()
-                    .map(ImageResponseDTO::getImageFilePath).findFirst().orElse("등록된 썸네일 이미지가 없습니다");
+                    .map(ImageResponseDTO::getImageFilePath)
+                    .findFirst()
+                    .orElse("/uploads/member-images/profile.png");
             this.profileImagePath = imageFiles.stream()
                     .map(ImageResponseDTO::getImageFilePath)
                     .toList();
@@ -86,8 +103,7 @@ public class MemberResponseDTO {
     }
 
     @Data
-    public static class LoginDTO{
-
+    public static class LoginDTO {
         private String accessToken;
         private String refreshToken;
         private Long expiresIn;
@@ -103,11 +119,10 @@ public class MemberResponseDTO {
         private String addressNumber;
         private String address;
         private String addressDetail;
+        private String bio;
         private String thumbnailProfileImagePath;
 
-
-
-        public LoginDTO(Member member,String accessToken, String refreshToken,Long expiresIn,String thumbnailProfileImagePath){
+        public LoginDTO(Member member, String accessToken, String refreshToken, Long expiresIn, String thumbnailProfileImagePath) {
             this.accessToken = accessToken;
             this.refreshToken = refreshToken;
             this.expiresIn = expiresIn;
@@ -121,6 +136,9 @@ public class MemberResponseDTO {
             this.date = member.getDate();
             this.addressInfo = member.getAddress() + member.getAddressDetail() + member.getAddressNumber();
             this.addressNumber = member.getAddressNumber();
+            this.address = member.getAddress();
+            this.addressDetail = member.getAddressDetail();
+            this.bio = member.getBio();
             this.thumbnailProfileImagePath = thumbnailProfileImagePath;
         }
     }

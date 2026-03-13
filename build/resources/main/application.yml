@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/nationwide?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: asd1234
+    password: 1234
 
   servlet:
     multipart:
@@ -52,3 +52,7 @@ jwt:
   secret: your-very-long-jwt-secret-key-at-least-32-characters
   access-expiration-ms: 3600000
   refresh-expiration-ms: 604800000
+
+board:
+  view:
+    cooldown-seconds: 1800

@@ -9,8 +9,10 @@ import com.nationwide.nationwide_server.board.BoardService;
 import com.nationwide.nationwide_server.board_comment.dto.BoardCommentRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,5 +34,24 @@ public class BoardCommentController {
         Board board = boardService.findByBoard(boardId);
         boardCommentService.SaveComment(board, sessionUser, saveDTO);
         return ResponseEntity.ok(ApiUtil.success(ResourceType.COMMENT.getSaveSuccess()));
+    }
+
+    @PutMapping("/{commentId}")
+    public ResponseEntity<?> updateComment(
+            @PathVariable("commentId") Long commentId,
+            @LoginUser SessionUser sessionUser,
+            @RequestBody BoardCommentRequestDTO.UpdateDTO updateDTO
+    ) {
+        boardCommentService.updateBoardComment(sessionUser, commentId, updateDTO);
+        return ResponseEntity.ok(ApiUtil.success(ResourceType.COMMENT.getUpdateSuccess()));
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(
+            @PathVariable("commentId") Long commentId,
+            @LoginUser SessionUser sessionUser
+    ) {
+        boardCommentService.deleteBoardComment(sessionUser, commentId);
+        return ResponseEntity.ok(ApiUtil.success(ResourceType.COMMENT.getDeleteSuccess()));
     }
 }

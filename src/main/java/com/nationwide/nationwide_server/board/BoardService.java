@@ -2,10 +2,14 @@ package com.nationwide.nationwide_server.board;
 
 import com.nationwide.nationwide_server.board.dto.BoardRequestDTO;
 import com.nationwide.nationwide_server.board.dto.BoardResponseDTO;
+import com.nationwide.nationwide_server.board_comment_like.BoardCommentLikeRepository;
+import com.nationwide.nationwide_server.board_comment_like.BoardCommentLikeService;
 import com.nationwide.nationwide_server.board_view.BoardViewService;
 import com.nationwide.nationwide_server.board_comment.BoardCommentService;
 import com.nationwide.nationwide_server.board_comment.dto.BoardCommentResponseDTO;
 import com.nationwide.nationwide_server.board_like.BoardLikeService;
+import com.nationwide.nationwide_server.follow.FollowService;
+import com.nationwide.nationwide_server.follow.dto.FollowResponseDTO;
 import com.nationwide.nationwide_server._core._custom_annotation.LoginUser;
 import com.nationwide.nationwide_server._core._enum.FileDBType;
 import com.nationwide.nationwide_server._core.errors.exception.Exception401;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.nationwide.nationwide_server._core._enum.ErrorCode.BOARD_NOT_FOUND;
 import static com.nationwide.nationwide_server._core._enum.ErrorCode.MEMBER_NOT_MINE;
@@ -37,7 +42,10 @@ public class BoardService {
     private final ImageFileService imageFileService;
     private final BoardLikeService boardLikeService;
     private final BoardCommentService boardCommentService;
+    private final BoardCommentLikeService boardCommentLikeService;
     private final BoardViewService boardViewService;
+    private final BoardCommentLikeRepository boardCommentLikeRepository;
+    private final FollowService followService;
 
     // 게시물 작성
     @Transactional
@@ -71,7 +79,7 @@ public class BoardService {
         boolean isLike = boardLikeService.existsByBoardIdAndMemberId(board.getId(),member.getId());
         Long likeCnt = boardLikeService.likeCnt(boardIdx);
         Long commentCnt = boardCommentService.countCommentByBoardIdx(boardIdx);
-        Slice<BoardCommentResponseDTO> boardCommentSlice = boardCommentService.commentSlice(boardIdx);
+        Slice<BoardCommentResponseDTO> boardCommentSlice = boardCommentService.commentSlice(boardIdx, sessionUser);
 
         List<ImageResponseDTO> imageFileDTOs = board.getImageFiles().stream()
                 .map(imageFile -> imageFileService.imageFileDetailListInfo(imageFile.getImageFileId()))
@@ -91,11 +99,12 @@ public class BoardService {
             boolean isLike = loginMemberId != null &&
                     boardLikeService.existsByBoardIdAndMemberId(board.getId(), loginMemberId);
             Long commentCnt = boardCommentService.countCommentByBoardIdx(board.getId());
+            FollowResponseDTO.StatusDTO followStatus = followService.getStatus(loginMemberId, board.getMember().getId());
             List<ImageResponseDTO> imageFileDTOs = board.getImageFiles().stream()
                     .map(imageFile -> new ImageResponseDTO(imageFile)) // 직접 변환 권장
                     .toList();
 
-            return BoardResponseDTO.ListDTO.of(sessionUser, board,likeCnt,commentCnt, imageFileDTOs,isLike);
+            return BoardResponseDTO.ListDTO.of(sessionUser, board,likeCnt,commentCnt, imageFileDTOs,isLike, followStatus);
         });
 
     }
