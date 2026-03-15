@@ -42,9 +42,7 @@ public class BoardService {
     private final ImageFileService imageFileService;
     private final BoardLikeService boardLikeService;
     private final BoardCommentService boardCommentService;
-    private final BoardCommentLikeService boardCommentLikeService;
     private final BoardViewService boardViewService;
-    private final BoardCommentLikeRepository boardCommentLikeRepository;
     private final FollowService followService;
 
     // 게시물 작성

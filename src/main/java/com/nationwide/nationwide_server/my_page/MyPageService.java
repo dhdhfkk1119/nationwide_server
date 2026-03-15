@@ -16,6 +16,7 @@ import com.nationwide.nationwide_server.my_page.dto.MyPageResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,11 @@ public class MyPageService {
             Long memberId,
             Pageable pageable
     ) {
+        Member member = memberService.findById(memberId);
+        Long viewerId = sessionUser != null ? sessionUser.getId() : null;
+        if (!followService.canViewProfile(viewerId, member)) {
+            return new SliceImpl<>(List.of(), pageable, false);
+        }
         Slice<Board> boardSlice = boardRepository.findByMemberId(memberId, pageable);
         return mapBoardSlice(sessionUser, boardSlice);
     }
@@ -63,6 +69,11 @@ public class MyPageService {
                 boardCnt,
                 status.getFollowerCnt(),
                 status.getFollowingCnt(),
+                member.isPrivateProfile(),
+                member.isLocationVisible(),
+                status.isCanViewProfile(),
+                status.isHasPendingRequest(),
+                status.getRelationStatus(),
                 status.isFollowing(),
                 status.isFollower()
         );

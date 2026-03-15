@@ -8,27 +8,68 @@ import org.springframework.data.repository.query.Param;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-    @Query("SELECT f FROM Follow f WHERE f.follower.id = :followerId AND f.following.id = :followingId")
-    Follow findByFollowerIdAndFollowingId(
-            @Param("followerId") Long followerId,
-            @Param("followingId") Long followingId
+    @Query("SELECT f FROM Follow f WHERE f.requester.id = :requesterId AND f.target.id = :targetId")
+    Follow findByRequesterIdAndTargetId(
+            @Param("requesterId") Long requesterId,
+            @Param("targetId") Long targetId
     );
 
-    @Query("SELECT COUNT(f) > 0 FROM Follow f WHERE f.follower.id = :followerId AND f.following.id = :followingId")
-    boolean existsByFollowerIdAndFollowingId(
-            @Param("followerId") Long followerId,
-            @Param("followingId") Long followingId
+    @Query("""
+            SELECT COUNT(f) > 0
+            FROM Follow f
+            WHERE f.requester.id = :requesterId
+              AND f.target.id = :targetId
+              AND f.relationStatus = :relationStatus
+            """)
+    boolean existsByRequesterIdAndTargetIdAndStatus(
+            @Param("requesterId") Long requesterId,
+            @Param("targetId") Long targetId,
+            @Param("relationStatus") FollowRelationStatus relationStatus
     );
 
-    @Query("SELECT COUNT(f) FROM Follow f WHERE f.following.id = :memberId")
+    @Query("""
+            SELECT COUNT(f)
+            FROM Follow f
+            WHERE f.target.id = :memberId
+              AND f.relationStatus IN ('REQUESTED', 'VISIBLE_ONLY', 'FOLLOWING')
+            """)
     Long countFollowersByMemberId(@Param("memberId") Long memberId);
 
-    @Query("SELECT COUNT(f) FROM Follow f WHERE f.follower.id = :memberId")
+    @Query("""
+            SELECT COUNT(f)
+            FROM Follow f
+            WHERE f.requester.id = :memberId
+              AND f.relationStatus IN ('REQUESTED', 'VISIBLE_ONLY', 'FOLLOWING')
+            """)
     Long countFollowingByMemberId(@Param("memberId") Long memberId);
 
-    @Query("SELECT f FROM Follow f JOIN FETCH f.follower WHERE f.following.id = :memberId ORDER BY f.followIdx DESC")
+    @Query("""
+            SELECT f
+            FROM Follow f
+            JOIN FETCH f.requester
+            WHERE f.target.id = :memberId
+              AND f.relationStatus IN ('REQUESTED', 'VISIBLE_ONLY', 'FOLLOWING')
+            ORDER BY f.followIdx DESC
+            """)
     Slice<Follow> findFollowerSlice(@Param("memberId") Long memberId, Pageable pageable);
 
-    @Query("SELECT f FROM Follow f JOIN FETCH f.following WHERE f.follower.id = :memberId ORDER BY f.followIdx DESC")
+    @Query("""
+            SELECT f
+            FROM Follow f
+            JOIN FETCH f.target
+            WHERE f.requester.id = :memberId
+              AND f.relationStatus IN ('REQUESTED', 'VISIBLE_ONLY', 'FOLLOWING')
+            ORDER BY f.followIdx DESC
+            """)
     Slice<Follow> findFollowingSlice(@Param("memberId") Long memberId, Pageable pageable);
+
+    @Query("""
+            SELECT f
+            FROM Follow f
+            JOIN FETCH f.requester
+            WHERE f.target.id = :memberId
+              AND f.relationStatus = 'REQUESTED'
+            ORDER BY f.followIdx DESC
+            """)
+    Slice<Follow> findIncomingRequestSlice(@Param("memberId") Long memberId, Pageable pageable);
 }

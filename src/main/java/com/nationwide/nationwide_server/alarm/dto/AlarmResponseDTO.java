@@ -38,9 +38,10 @@ public class AlarmResponseDTO {
 
         return switch (type) {
             case FOLLOW -> actorName + " 사용자가 회원님을 팔로우했습니다.";
-            case BOARD_LIKE -> actorName + " 사용자가 회원님 스토리에 좋아요를 눌렀습니다.";
-            case BOARD_COMMENT -> actorName + " 사용자가 회원님 스토리에 댓글을 남겼습니다.";
-            case BOARD_COMMENT_LIKE -> actorName + " 사용자가 회원님 스토리 댓글에 좋아요를 눌렀습니다.";
+            case FOLLOW_REQUEST_REJECTED -> actorName + " 사용자가 비공개 게시물 공개 요청을 거절했습니다.";
+            case BOARD_LIKE -> actorName + " 사용자가 회원님의 스토리에 좋아요를 눌렀습니다.";
+            case BOARD_COMMENT -> actorName + " 사용자가 회원님의 스토리에 댓글을 남겼습니다.";
+            case BOARD_COMMENT_LIKE -> actorName + " 사용자가 회원님의 스토리 댓글에 좋아요를 눌렀습니다.";
         };
     }
 

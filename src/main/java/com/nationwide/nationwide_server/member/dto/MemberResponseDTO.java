@@ -1,5 +1,6 @@
 package com.nationwide.nationwide_server.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.m_enum.Gender;
@@ -27,6 +28,10 @@ public class MemberResponseDTO {
         private Long boardCnt;
         private Long followerCnt;
         private Long followingCnt;
+        @JsonProperty("isPrivateProfile")
+        private boolean isPrivateProfile;
+        @JsonProperty("isLocationVisible")
+        private boolean isLocationVisible;
 
         public DetailDTO(
                 Member member,
@@ -58,6 +63,8 @@ public class MemberResponseDTO {
             this.boardCnt = boardCnt;
             this.followerCnt = followerCnt;
             this.followingCnt = followingCnt;
+            this.isPrivateProfile = member.isPrivateProfile();
+            this.isLocationVisible = member.isLocationVisible();
         }
     }
 
@@ -76,6 +83,10 @@ public class MemberResponseDTO {
         private String addressInfo;
         private String bio;
         private String thumbnailProfileImagePath;
+        @JsonProperty("isPrivateProfile")
+        private boolean isPrivateProfile;
+        @JsonProperty("isLocationVisible")
+        private boolean isLocationVisible;
         private List<String> profileImagePath;
         private List<String> imageFilesId;
 
@@ -121,6 +132,10 @@ public class MemberResponseDTO {
         private String addressDetail;
         private String bio;
         private String thumbnailProfileImagePath;
+        @JsonProperty("isPrivateProfile")
+        private boolean isPrivateProfile;
+        @JsonProperty("isLocationVisible")
+        private boolean isLocationVisible;
 
         public LoginDTO(Member member, String accessToken, String refreshToken, Long expiresIn, String thumbnailProfileImagePath) {
             this.accessToken = accessToken;
@@ -140,6 +155,23 @@ public class MemberResponseDTO {
             this.addressDetail = member.getAddressDetail();
             this.bio = member.getBio();
             this.thumbnailProfileImagePath = thumbnailProfileImagePath;
+            this.isPrivateProfile = member.isPrivateProfile();
+            this.isLocationVisible = member.isLocationVisible();
+        }
+    }
+
+    @Data
+    public static class PrivacySettingsDTO {
+        @JsonProperty("isPrivateProfile")
+        private boolean isPrivateProfile;
+        @JsonProperty("isLocationVisible")
+        private boolean isLocationVisible;
+
+        public static PrivacySettingsDTO of(Member member) {
+            PrivacySettingsDTO dto = new PrivacySettingsDTO();
+            dto.isPrivateProfile = member.isPrivateProfile();
+            dto.isLocationVisible = member.isLocationVisible();
+            return dto;
         }
     }
 }

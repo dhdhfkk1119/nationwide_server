@@ -3,6 +3,7 @@ package com.nationwide.nationwide_server.follow;
 import com.nationwide.nationwide_server._core._custom_annotation.LoginUser;
 import com.nationwide.nationwide_server._core.util.ApiUtil;
 import com.nationwide.nationwide_server._core.util.SessionUser;
+import com.nationwide.nationwide_server.follow.dto.FollowRequestDTO;
 import com.nationwide.nationwide_server.follow.dto.FollowResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,6 +59,26 @@ public class FollowController {
             @PageableDefault(size = 10) Pageable pageable
     ) {
         Slice<FollowResponseDTO.MemberListDTO> response = followService.followingSlice(sessionUser, memberId, pageable);
+        return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
+    @GetMapping("/requests/incoming")
+    public ResponseEntity<?> incomingRequests(
+            @LoginUser SessionUser sessionUser,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Slice<FollowResponseDTO.MemberListDTO> response = followService.incomingRequestSlice(sessionUser, pageable);
+        return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
+    @PostMapping("/{requesterMemberId}/respond")
+    public ResponseEntity<?> respond(
+            @LoginUser SessionUser sessionUser,
+            @PathVariable("requesterMemberId") Long requesterMemberId,
+            @RequestBody FollowRequestDTO.RespondDTO request
+    ) {
+        FollowResponseDTO.StatusDTO response =
+                followService.respondToRequest(sessionUser, requesterMemberId, request.getAction());
         return ResponseEntity.ok(ApiUtil.success(response));
     }
 }

@@ -5,6 +5,7 @@ import com.nationwide.nationwide_server._core.errors.exception.Exception404;
 import com.nationwide.nationwide_server._core.util.SessionUser;
 import com.nationwide.nationwide_server.alarm.AlarmService;
 import com.nationwide.nationwide_server.board.Board;
+import com.nationwide.nationwide_server.board.BoardRepository;
 import com.nationwide.nationwide_server.board.BoardService;
 import com.nationwide.nationwide_server.board_comment.dto.BoardCommentRequestDTO;
 import com.nationwide.nationwide_server.board_comment.dto.BoardCommentResponseDTO;
@@ -17,8 +18,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.nationwide.nationwide_server._core._enum.ErrorCode.COMMENT_NOT_FOUND;
-import static com.nationwide.nationwide_server._core._enum.ErrorCode.COMMENT_NOT_MINE;
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +28,11 @@ public class BoardCommentService {
     private final BoardCommentLikeService boardCommentLikeService;
     private final MemberService memberService;
     private final AlarmService alarmService;
-    private final BoardService boardService;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public void SaveComment(Board board, SessionUser sessionUser, BoardCommentRequestDTO.SaveDTO saveDTO) {
-        Board managedBoard = boardService.findByBoard(board.getId());
+        Board managedBoard = boardRepository.findById(board.getId()).orElseThrow(() -> new Exception404(BOARD_NOT_FOUND.getMessage()));
         Member member = memberService.findById(sessionUser.getId());
         BoardComment boardComment = saveDTO.toEntity(managedBoard, member);
         boardCommentRepository.save(boardComment);

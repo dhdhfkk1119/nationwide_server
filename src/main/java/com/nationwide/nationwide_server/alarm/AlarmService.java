@@ -53,6 +53,11 @@ public class AlarmService {
     }
 
     @Transactional
+    public void createFollowRequestRejectedAlarm(Member actor, Member recipient) {
+        save(actor, recipient, null, null, AlarmType.FOLLOW_REQUEST_REJECTED);
+    }
+
+    @Transactional
     public void createBoardLikeAlarm(Member actor, Board board) {
         save(actor, board.getMember(), board, null, AlarmType.BOARD_LIKE);
     }

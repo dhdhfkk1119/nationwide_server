@@ -63,6 +63,15 @@ public class MemberController {
         return ResponseEntity.ok(ApiUtil.success(dto));
     }
 
+    @PutMapping("/privacy-settings")
+    public ResponseEntity<?> updatePrivacySettings(
+            @LoginUser SessionUser sessionUser,
+            @RequestBody MemberRequestDTO.PrivacySettingsDTO dto
+    ) {
+        MemberResponseDTO.PrivacySettingsDTO response = memberService.updatePrivacySettings(sessionUser, dto);
+        return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
     @PutMapping("/update/{memberIdx}")
     public ResponseEntity<?> updateMember(
             @LoginUser SessionUser sessionUser,

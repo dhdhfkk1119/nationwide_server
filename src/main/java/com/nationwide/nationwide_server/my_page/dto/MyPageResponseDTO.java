@@ -21,6 +21,11 @@ public class MyPageResponseDTO {
         private Long boardCnt;
         private Long followerCnt;
         private Long followingCnt;
+        private boolean isPrivateProfile;
+        private boolean isLocationVisible;
+        private boolean canViewProfile;
+        private boolean hasPendingRequest;
+        private String relationStatus;
         @JsonProperty("isFollowing")
         private boolean isFollowing;
         @JsonProperty("isFollower")
@@ -34,6 +39,11 @@ public class MyPageResponseDTO {
                 Long boardCnt,
                 Long followerCnt,
                 Long followingCnt,
+                boolean isPrivateProfile,
+                boolean isLocationVisible,
+                boolean canViewProfile,
+                boolean hasPendingRequest,
+                String relationStatus,
                 boolean isFollowing,
                 boolean isFollower
         ) {
@@ -52,6 +62,11 @@ public class MyPageResponseDTO {
             dto.boardCnt = boardCnt;
             dto.followerCnt = followerCnt;
             dto.followingCnt = followingCnt;
+            dto.isPrivateProfile = isPrivateProfile;
+            dto.isLocationVisible = isLocationVisible;
+            dto.canViewProfile = canViewProfile;
+            dto.hasPendingRequest = hasPendingRequest;
+            dto.relationStatus = relationStatus;
             dto.isFollowing = isFollowing;
             dto.isFollower = isFollower;
             dto.isFollow = isFollowing && isFollower;

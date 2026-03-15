@@ -1,5 +1,6 @@
 package com.nationwide.nationwide_server.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.m_enum.Gender;
 import com.nationwide.nationwide_server.member.m_enum.LoginType;
@@ -79,6 +80,16 @@ public class MemberRequestDTO {
         private String addressDetail;
         private String bio;
         private List<String> imageFileId;
+        private Boolean isPrivateProfile;
+        private Boolean isLocationVisible;
+    }
+
+    @Data
+    public static class PrivacySettingsDTO {
+        @JsonProperty("isPrivateProfile")
+        private boolean isPrivateProfile;
+        @JsonProperty("isLocationVisible")
+        private boolean isLocationVisible;
     }
 
     @Data

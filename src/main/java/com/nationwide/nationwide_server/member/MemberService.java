@@ -172,6 +172,20 @@ public class MemberService {
         );
     }
 
+    @Transactional
+    public MemberResponseDTO.PrivacySettingsDTO updatePrivacySettings(
+            SessionUser sessionUser,
+            MemberRequestDTO.PrivacySettingsDTO dto
+    ) {
+        if (sessionUser == null) {
+            throw new Exception401("로그인이 필요합니다.");
+        }
+
+        Member member = findById(sessionUser.getId());
+        member.updatePrivacySettings(dto.isPrivateProfile(), dto.isLocationVisible());
+        return MemberResponseDTO.PrivacySettingsDTO.of(member);
+    }
+
 
     // 회원 고유 번호 Member 유무 검사
     public Member findById(Long memberId){

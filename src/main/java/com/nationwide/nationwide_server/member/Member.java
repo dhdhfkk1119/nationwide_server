@@ -84,6 +84,12 @@ public class Member implements ImageOwner {
     private boolean isEmailVerified = true;
     private boolean isPhoneVerified = false;
 
+    @Builder.Default
+    private boolean isPrivateProfile = false;
+
+    @Builder.Default
+    private boolean isLocationVisible = true;
+
     public String getTime() {
         return TimeFormatUtil.timestampFormat(createdAt);
     }
@@ -130,6 +136,18 @@ public class Member implements ImageOwner {
         if (dto.getBio() != null) {
             this.bio = dto.getBio();
         }
+        if (dto.getIsPrivateProfile() != null) {
+            this.isPrivateProfile = dto.getIsPrivateProfile();
+        }
+        if (dto.getIsLocationVisible() != null) {
+            this.isLocationVisible = dto.getIsLocationVisible();
+        }
+        this.updatedAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    public void updatePrivacySettings(boolean isPrivateProfile, boolean isLocationVisible) {
+        this.isPrivateProfile = isPrivateProfile;
+        this.isLocationVisible = isLocationVisible;
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 
