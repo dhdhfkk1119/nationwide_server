@@ -32,6 +32,7 @@ public class BoardCommentService {
 
     @Transactional
     public void SaveComment(Board board, SessionUser sessionUser, BoardCommentRequestDTO.SaveDTO saveDTO) {
+        memberService.validateActiveMember(sessionUser.getId());
         Board managedBoard = boardRepository.findById(board.getId()).orElseThrow(() -> new Exception404(BOARD_NOT_FOUND.getMessage()));
         Member member = memberService.findById(sessionUser.getId());
         BoardComment boardComment = saveDTO.toEntity(managedBoard, member);
@@ -41,6 +42,7 @@ public class BoardCommentService {
 
     @Transactional
     public void updateBoardComment(SessionUser sessionUser, Long commentIdx, BoardCommentRequestDTO.UpdateDTO updateDTO) {
+        memberService.validateActiveMember(sessionUser.getId());
         BoardComment boardComment = findByCommentIdx(commentIdx);
         if (!boardComment.getIsMine(sessionUser.getId())) {
             throw new Exception401(COMMENT_NOT_MINE.getMessage());
@@ -50,6 +52,7 @@ public class BoardCommentService {
 
     @Transactional
     public void deleteBoardComment(SessionUser sessionUser, Long commentIdx) {
+        memberService.validateActiveMember(sessionUser.getId());
         BoardComment boardComment = findByCommentIdx(commentIdx);
         boolean isMine = boardComment.getIsMine(sessionUser.getId());
         if (!isMine) {

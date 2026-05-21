@@ -7,6 +7,8 @@ import com.nationwide.nationwide_server.member.Member;
 import lombok.Data;
 
 public class FollowResponseDTO {
+    private static final String DEACTIVATED_MEMBER_NAME = "비활성화된 계정";
+
     @Data
     public static class StatusDTO {
         @JsonProperty("isFollowing")
@@ -67,14 +69,17 @@ public class FollowResponseDTO {
                 boolean hasPendingRequest
         ) {
             MemberListDTO dto = new MemberListDTO();
+            boolean canExposeMember = !member.isDeactivatedNow() || (viewerId != null && viewerId.equals(member.getId()));
             dto.memberIdx = member.getId();
-            dto.name = member.getName();
-            dto.nickName = member.getNickName();
-            dto.bio = member.getBio();
-            dto.thumbnailProfileImagePath = member.getImageFiles().stream()
-                    .findFirst()
-                    .map(imageFile -> imageFile.getImageFilePath())
-                    .orElse("/uploads/member-images/profile.png");
+            dto.name = canExposeMember ? member.getName() : DEACTIVATED_MEMBER_NAME;
+            dto.nickName = canExposeMember ? member.getNickName() : null;
+            dto.bio = canExposeMember ? member.getBio() : null;
+            dto.thumbnailProfileImagePath = canExposeMember
+                    ? member.getImageFiles().stream()
+                            .findFirst()
+                            .map(imageFile -> imageFile.getImageFilePath())
+                            .orElse("/uploads/member-images/profile.png")
+                    : "/uploads/member-images/profile.png";
 
             StatusDTO status = followService.getStatus(viewerId, member.getId());
             dto.isFollowing = status.isFollowing();

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,6 +48,11 @@ public class MemberController {
         return ResponseEntity.ok(memberService.existsByLoginId(email));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchMembers(@RequestParam("query") String query) {
+        return ResponseEntity.ok(ApiUtil.success(memberService.searchMembers(query)));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> loginMember(@RequestBody MemberRequestDTO.LoginDTO dto) {
         MemberResponseDTO.LoginDTO loginDTO = memberService.loginMember(dto);
@@ -69,6 +75,21 @@ public class MemberController {
             @RequestBody MemberRequestDTO.PrivacySettingsDTO dto
     ) {
         MemberResponseDTO.PrivacySettingsDTO response = memberService.updatePrivacySettings(sessionUser, dto);
+        return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
+    @PutMapping("/deactivate")
+    public ResponseEntity<?> deactivate(
+            @LoginUser SessionUser sessionUser,
+            @RequestBody MemberRequestDTO.DeactivateRequestDTO dto
+    ) {
+        MemberResponseDTO.DeactivationStatusDTO response = memberService.deactivate(sessionUser, dto);
+        return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
+    @PutMapping("/deactivate/cancel")
+    public ResponseEntity<?> cancelDeactivation(@LoginUser SessionUser sessionUser) {
+        MemberResponseDTO.DeactivationStatusDTO response = memberService.cancelDeactivation(sessionUser);
         return ResponseEntity.ok(ApiUtil.success(response));
     }
 

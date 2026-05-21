@@ -25,6 +25,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +91,16 @@ public class Member implements ImageOwner {
     @Builder.Default
     private boolean isLocationVisible = true;
 
+    @Builder.Default
+    private boolean isDeactivate = false;
+
+    private Timestamp deactivateDate;
+    private Timestamp deactivateUntil;
+    private Timestamp deactivateCancelDate;
+
+    @Builder.Default
+    private int deactivateCount = 0;
+
     public String getTime() {
         return TimeFormatUtil.timestampFormat(createdAt);
     }
@@ -149,6 +160,41 @@ public class Member implements ImageOwner {
         this.isPrivateProfile = isPrivateProfile;
         this.isLocationVisible = isLocationVisible;
         this.updatedAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    public boolean isDeactivatedNow() {
+        if (!isDeactivate) {
+            return false;
+        }
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        return deactivateUntil == null || deactivateUntil.after(now);
+    }
+
+    public boolean canDeactivate() {
+        return deactivateCount < 3;
+    }
+
+    public int getRemainingDeactivateCount() {
+        return Math.max(0, 3 - deactivateCount);
+    }
+
+    public void startDeactivation(int durationMonths) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        this.isDeactivate = true;
+        this.deactivateDate = now;
+        this.deactivateUntil = Timestamp.valueOf(LocalDateTime.now().plusMonths(durationMonths));
+        this.deactivateCancelDate = null;
+        this.deactivateCount += 1;
+        this.updatedAt = now;
+    }
+
+    public void cancelDeactivation() {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        this.isDeactivate = false;
+        this.deactivateCancelDate = now;
+        this.deactivateUntil = null;
+        this.updatedAt = now;
     }
 
     public boolean getIsMine(Long memberIdx) {

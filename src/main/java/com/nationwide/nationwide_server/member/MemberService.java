@@ -29,7 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.nationwide.nationwide_server._core._enum.ErrorCode.*;
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.EMAIL_NOT_VERIFIED;
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.MEMBER_ALREADY_EXISTS;
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.MEMBER_ID_NOT_FOUND;
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.MEMBER_NOT_FOUND;
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.MEMBER_NOT_MINE;
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.MEMBER_PASS_NOT_MISMATCH;
+import static com.nationwide.nationwide_server._core._enum.ErrorCode.TERMS_IS_AGREED;
 
 @Service
 @RequiredArgsConstructor
@@ -47,121 +53,102 @@ public class MemberService {
     private final BoardRepository boardRepository;
     private final FollowRepository followRepository;
 
-    // 회원 가입
     @Transactional
-    public void save(MemberRequestDTO.SaveDTO saveDTO){
+    public void save(MemberRequestDTO.SaveDTO saveDTO) {
         Member member = saveDTO.toEntity();
 
         emailService.findByLoginId(saveDTO.getLoginId());
 
-        if(!emailRepository.existsByLoginId(saveDTO.getLoginId())){
+        if (!emailRepository.existsByLoginId(saveDTO.getLoginId())) {
             throw new Exception400(EMAIL_NOT_VERIFIED.getMessage());
         }
 
-        // 아이디 중복 검사
-        if(existsByLoginId(saveDTO.getLoginId())){
+        if (existsByLoginId(saveDTO.getLoginId())) {
             throw new Exception401(MEMBER_ALREADY_EXISTS.getMessage());
         }
 
-
-        // 1. 모든 필수 약관 가져오기
         List<Terms> requiredTerms = termsRepository.findByIsRequired();
-
-        // 2. 필수 약관 ID 목록
         List<Long> requiredIds = requiredTerms.stream()
                 .map(Terms::getId)
                 .collect(Collectors.toList());
-
 
         if (!saveDTO.getAgreedTermsIds().containsAll(requiredIds)) {
             throw new Exception400(TERMS_IS_AGREED.getMessage());
         }
 
-
         member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
         memberRepository.save(member);
 
         List<MemberTerms> memberTermsList = new ArrayList<>();
-
-        // 약관 동의
-        for(Long terms : saveDTO.getAgreedTermsIds()){
-
-            // 약관 유무 체크
+        for (Long terms : saveDTO.getAgreedTermsIds()) {
             Terms termsTo = termsService.findByTermsId(terms);
-            memberTermsList.add( MemberTerms.builder()
+            memberTermsList.add(MemberTerms.builder()
                     .memberId(member)
                     .termsId(termsTo)
                     .build());
-
         }
+
         member.setEmailVerified(true);
         memberTermsRepository.saveAll(memberTermsList);
-
         emailRepository.deleteByLoginId(saveDTO.getLoginId());
     }
 
-    // 회원 로그인
-    public MemberResponseDTO.LoginDTO loginMember(MemberRequestDTO.LoginDTO dto){
+    public MemberResponseDTO.LoginDTO loginMember(MemberRequestDTO.LoginDTO dto) {
         Member member = findByLoginId(dto.getLoginId());
 
-        if(!bCryptPasswordEncoder.matches(dto.getPassword(), member.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(dto.getPassword(), member.getPassword())) {
             throw new Exception401(MEMBER_PASS_NOT_MISMATCH.getMessage());
         }
 
         String accessToken = jwtTokenProvider.createAccessToken(member);
-
-        String refreshToken = null;
-        if(dto.isAutoLogin()){
-            refreshToken = jwtTokenProvider.createRefreshToken(member);
-        }
-
+        String refreshToken = dto.isAutoLogin() ? jwtTokenProvider.createRefreshToken(member) : null;
         Long expiresIn = jwtTokenProvider.getAccessExpirationSeconds();
 
         String thumbnailImagePath = member.getImageFiles().stream()
-                .findFirst()                      // 첫 번째 요소를 Optional로 반환
-                .map(ImageFile::getImageFilePath) // 요소가 있다면 경로 추출
-                .orElse(null);                    // 없다면 null 반환
+                .findFirst()
+                .map(ImageFile::getImageFilePath)
+                .orElse(null);
 
-        return new MemberResponseDTO.LoginDTO(member,accessToken,refreshToken,expiresIn,thumbnailImagePath);
+        return new MemberResponseDTO.LoginDTO(
+                member,
+                accessToken,
+                refreshToken,
+                expiresIn,
+                thumbnailImagePath
+        );
     }
 
-    // 회원 업데이트
     @Transactional
-    public void updateMember(Long memberIdx,
-                             SessionUser sessionUser,
-                             MemberRequestDTO.UpdateDTO updateDTO,
-                             List<MultipartFile> file){
-
+    public void updateMember(
+            Long memberIdx,
+            SessionUser sessionUser,
+            MemberRequestDTO.UpdateDTO updateDTO,
+            List<MultipartFile> file
+    ) {
         Member member = findById(memberIdx);
-        if(!member.getIsMine(sessionUser.getId())) {
+        if (!member.getIsMine(sessionUser.getId())) {
             throw new Exception401(MEMBER_NOT_MINE.getMessage());
         }
 
-        // 기존 이미지 중에 다른 값 있으면 삭제
-        if(updateDTO.getImageFileId() != null){
-            imageFileService.syncDeleteImages(member,updateDTO.getImageFileId());
+        if (updateDTO.getImageFileId() != null) {
+            imageFileService.syncDeleteImages(member, updateDTO.getImageFileId());
         }
 
-        // 삭제 이후 새로운 이미지 추가
-        if(file != null && !file.isEmpty()){
-            imageFileService.addNewImages(member,file);
+        if (file != null && !file.isEmpty()) {
+            imageFileService.addNewImages(member, file);
         }
 
         member.updateMember(updateDTO);
     }
 
-
-    // 회원 유저 정보 찾기
     public MemberResponseDTO.DetailDTO detail(Long memberId) {
         Member member = findById(memberId);
-
         List<ImageResponseDTO> imageFileDTOs = member.getImageFiles().stream()
                 .map(ImageResponseDTO::new)
                 .toList();
         Long boardCnt = boardRepository.countByMemberId(memberId);
         Long followerCnt = followRepository.countFollowersByMemberId(memberId);
         Long followingCnt = followRepository.countFollowingByMemberId(memberId);
-
 
         return new MemberResponseDTO.DetailDTO(
                 member,
@@ -178,7 +165,7 @@ public class MemberService {
             MemberRequestDTO.PrivacySettingsDTO dto
     ) {
         if (sessionUser == null) {
-            throw new Exception401("로그인이 필요합니다.");
+            throw new Exception401("濡쒓렇?몄씠 ?꾩슂?⑸땲??");
         }
 
         Member member = findById(sessionUser.getId());
@@ -186,22 +173,83 @@ public class MemberService {
         return MemberResponseDTO.PrivacySettingsDTO.of(member);
     }
 
+    @Transactional
+    public MemberResponseDTO.DeactivationStatusDTO deactivate(
+            SessionUser sessionUser,
+            MemberRequestDTO.DeactivateRequestDTO dto
+    ) {
+        if (sessionUser == null) {
+            throw new Exception401("濡쒓렇?몄씠 ?꾩슂?⑸땲??");
+        }
+        if (dto.getDurationMonths() < 1 || dto.getDurationMonths() > 12) {
+            throw new Exception400("鍮꾪솢?깊솕 湲곌컙??1媛쒖썡遺??곗씠?먯꽌 12媛쒖썡源뚯? ?좏깮?섑빐二쇱꽭??");
+        }
 
-    // 회원 고유 번호 Member 유무 검사
-    public Member findById(Long memberId){
+        Member member = findById(sessionUser.getId());
+        if (member.isDeactivatedNow()) {
+            throw new Exception400("?대? 鍮꾪솢?깊솕 以묒씤 怨꾩젙?낅땲??");
+        }
+        if (!member.canDeactivate()) {
+            throw new Exception400("鍮꾪솢?깊솕??理쒕? 3踰덇퉴吏留?媛��ν빀?덈떎.");
+        }
+
+        member.startDeactivation(dto.getDurationMonths());
+        return MemberResponseDTO.DeactivationStatusDTO.of(member);
+    }
+
+    @Transactional
+    public MemberResponseDTO.DeactivationStatusDTO cancelDeactivation(SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new Exception401("濡쒓렇?몄씠 ?꾩슂?⑸땲??");
+        }
+
+        Member member = findById(sessionUser.getId());
+        if (!member.isDeactivatedNow()) {
+            return MemberResponseDTO.DeactivationStatusDTO.of(member);
+        }
+
+        member.cancelDeactivation();
+        return MemberResponseDTO.DeactivationStatusDTO.of(member);
+    }
+
+    public boolean isDeactivated(Member member) {
+        return member != null && member.isDeactivatedNow();
+    }
+
+    public boolean canExposeMember(Member member, Long viewerId) {
+        return !isDeactivated(member) || (viewerId != null && viewerId.equals(member.getId()));
+    }
+
+    public void validateActiveMember(Long memberId) {
+        Member member = findById(memberId);
+        if (member.isDeactivatedNow()) {
+            throw new Exception400("鍮꾪솢?깊솕 以묒씤 怨꾩젙??湲곕뒫???댁슜?????놁뒿?덈떎.");
+        }
+    }
+
+    public Member findById(Long memberId) {
         return memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new Exception404(MEMBER_NOT_FOUND.getMessage()));
     }
 
-    // 회원 로그인 아이디 Member 이메일 유무 검사
-    public boolean existsByLoginId(String loginId){
+    public boolean existsByLoginId(String loginId) {
         return memberRepository.existsByLoginId(loginId);
     }
 
-    public Member findByLoginId(String loginId){
-        return memberRepository.findByLoginId(loginId).orElseThrow(() -> new Exception404(MEMBER_ID_NOT_FOUND.getMessage()));
+    public Member findByLoginId(String loginId) {
+        return memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new Exception404(MEMBER_ID_NOT_FOUND.getMessage()));
     }
 
+    public List<MemberResponseDTO.SearchDTO> searchMembers(String query) {
+        String normalized = query == null ? "" : query.trim();
+        if (normalized.isBlank()) {
+            return List.of();
+        }
 
-
+        return memberRepository.searchByNameOrNickName(normalized).stream()
+                .map(MemberResponseDTO.SearchDTO::of)
+                .limit(20)
+                .toList();
+    }
 }

@@ -10,6 +10,8 @@ import lombok.Data;
 import java.util.List;
 
 public class MyPageResponseDTO {
+    private static final String DEACTIVATED_MEMBER_NAME = "비활성화된 계정";
+
     @Data
     public static class SummaryDTO {
         private Long memberIdx;
@@ -45,26 +47,31 @@ public class MyPageResponseDTO {
                 boolean hasPendingRequest,
                 String relationStatus,
                 boolean isFollowing,
-                boolean isFollower
+                boolean isFollower,
+                boolean canExposeMember
         ) {
             SummaryDTO dto = new SummaryDTO();
             dto.memberIdx = member.getId();
-            dto.name = member.getName();
-            dto.nickName = member.getNickName();
-            dto.bio = member.getBio();
-            dto.thumbnailProfileImagePath = imageFiles.stream()
-                    .map(ImageResponseDTO::getImageFilePath)
-                    .findFirst()
-                    .orElse("/uploads/member-images/profile.png");
-            dto.profileImagePath = imageFiles.stream()
-                    .map(ImageResponseDTO::getImageFilePath)
-                    .toList();
-            dto.boardCnt = boardCnt;
+            dto.name = canExposeMember ? member.getName() : DEACTIVATED_MEMBER_NAME;
+            dto.nickName = canExposeMember ? member.getNickName() : null;
+            dto.bio = canExposeMember ? member.getBio() : null;
+            dto.thumbnailProfileImagePath = canExposeMember
+                    ? imageFiles.stream()
+                            .map(ImageResponseDTO::getImageFilePath)
+                            .findFirst()
+                            .orElse("/uploads/member-images/profile.png")
+                    : "/uploads/member-images/profile.png";
+            dto.profileImagePath = canExposeMember
+                    ? imageFiles.stream()
+                            .map(ImageResponseDTO::getImageFilePath)
+                            .toList()
+                    : List.of("/uploads/member-images/profile.png");
+            dto.boardCnt = canExposeMember ? boardCnt : 0L;
             dto.followerCnt = followerCnt;
             dto.followingCnt = followingCnt;
             dto.isPrivateProfile = isPrivateProfile;
             dto.isLocationVisible = isLocationVisible;
-            dto.canViewProfile = canViewProfile;
+            dto.canViewProfile = canViewProfile && canExposeMember;
             dto.hasPendingRequest = hasPendingRequest;
             dto.relationStatus = relationStatus;
             dto.isFollowing = isFollowing;
