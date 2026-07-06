@@ -58,6 +58,12 @@ public class Member implements ImageOwner {
     private String addressNumber;
     private String address;
     private String addressDetail;
+    private Double latitude;
+    private Double longitude;
+    private String geocodedAddress;
+
+    @Builder.Default
+    private int addressChangeCount = 0;
 
     @Builder.Default
     private String bio = "";
@@ -106,6 +112,8 @@ public class Member implements ImageOwner {
     }
 
     public void updateMember(MemberRequestDTO.UpdateDTO dto) {
+        boolean addressChanged = false;
+
         if (dto.getName() != null) {
             this.name = dto.getName();
         }
@@ -125,12 +133,15 @@ public class Member implements ImageOwner {
             this.date = dto.getDate();
         }
         if (dto.getAddressNumber() != null) {
+            addressChanged = addressChanged || !dto.getAddressNumber().equals(this.addressNumber);
             this.addressNumber = dto.getAddressNumber();
         }
         if (dto.getAddress() != null) {
+            addressChanged = addressChanged || !dto.getAddress().equals(this.address);
             this.address = dto.getAddress();
         }
         if (dto.getAddressDetail() != null) {
+            addressChanged = addressChanged || !dto.getAddressDetail().equals(this.addressDetail);
             this.addressDetail = dto.getAddressDetail();
         }
         if (dto.getBio() != null) {
@@ -141,6 +152,9 @@ public class Member implements ImageOwner {
         }
         if (dto.getIsLocationVisible() != null) {
             this.isLocationVisible = dto.getIsLocationVisible();
+        }
+        if (addressChanged) {
+            this.addressChangeCount += 1;
         }
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
@@ -153,5 +167,36 @@ public class Member implements ImageOwner {
 
     public boolean getIsMine(Long memberIdx) {
         return this.id.equals(memberIdx);
+    }
+
+    public void updateCoordinates(Double latitude, Double longitude, String geocodedAddress) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.geocodedAddress = geocodedAddress;
+        this.updatedAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    public void clearCoordinates() {
+        updateCoordinates(null, null, null);
+    }
+
+    public String getFullAddress() {
+        StringBuilder builder = new StringBuilder();
+
+        if (address != null && !address.isBlank()) {
+            builder.append(address.trim());
+        }
+        if (addressDetail != null && !addressDetail.isBlank()) {
+            if (!builder.isEmpty()) {
+                builder.append(' ');
+            }
+            builder.append(addressDetail.trim());
+        }
+
+        return builder.toString().trim();
+    }
+
+    public boolean hasCoordinates() {
+        return latitude != null && longitude != null;
     }
 }

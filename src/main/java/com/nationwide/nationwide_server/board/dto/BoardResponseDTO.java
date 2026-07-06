@@ -40,6 +40,7 @@ public class BoardResponseDTO {
         private boolean isFollower;
         @JsonProperty("isFollow")
         private boolean isFollow;
+        private Double distanceKm;
         private List<String> imagePath;
         private List<String> imageFileId;
 
@@ -103,6 +104,7 @@ public class BoardResponseDTO {
         private boolean isFollower;
         @JsonProperty("isFollow")
         private boolean isFollow;
+        private Double distanceKm;
         private List<String> imagePath;
         private List<String> imageFileId;
 
@@ -113,7 +115,8 @@ public class BoardResponseDTO {
                 Long commentCnt,
                 List<ImageResponseDTO> imageFiles,
                 boolean isLiked,
-                FollowResponseDTO.StatusDTO followStatus
+                FollowResponseDTO.StatusDTO followStatus,
+                Double distanceKm
         ) {
             ListDTO dto = new ListDTO();
             dto.id = board.getId();
@@ -135,6 +138,7 @@ public class BoardResponseDTO {
             dto.isFollowing = followStatus != null && followStatus.isFollowing();
             dto.isFollower = followStatus != null && followStatus.isFollower();
             dto.isFollow = followStatus != null && followStatus.isFollow();
+            dto.distanceKm = distanceKm;
             dto.imagePath = imageFiles.stream()
                     .map(ImageResponseDTO::getImageFilePath)
                     .toList();

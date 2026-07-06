@@ -120,7 +120,16 @@ public class MyPageService {
                     .map(ImageResponseDTO::new)
                     .toList();
 
-            return BoardResponseDTO.ListDTO.of(sessionUser, board, likeCnt, commentCnt, imageFileDTOs, isLike, followStatus);
+            return BoardResponseDTO.ListDTO.of(
+                    sessionUser,
+                    board,
+                    likeCnt,
+                    commentCnt,
+                    imageFileDTOs,
+                    isLike,
+                    followStatus,
+                    null
+            );
         });
     }
 }

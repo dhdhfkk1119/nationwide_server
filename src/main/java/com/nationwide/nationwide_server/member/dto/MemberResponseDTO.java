@@ -22,6 +22,9 @@ public class MemberResponseDTO {
         private String date;
         private String addressInfo;
         private String bio;
+        private Double latitude;
+        private Double longitude;
+        private int addressChangeCount;
         private String thumbnailProfileImagePath;
         private List<String> profileImagePath;
         private List<String> imageFilesId;
@@ -50,6 +53,9 @@ public class MemberResponseDTO {
             this.date = member.getDate();
             this.addressInfo = member.getAddress() + member.getAddressDetail() + member.getAddressNumber();
             this.bio = member.getBio();
+            this.latitude = member.getLatitude();
+            this.longitude = member.getLongitude();
+            this.addressChangeCount = member.getAddressChangeCount();
             this.thumbnailProfileImagePath = imageFiles.stream()
                     .map(ImageResponseDTO::getImageFilePath)
                     .findFirst()
@@ -82,6 +88,9 @@ public class MemberResponseDTO {
         private String addressDetail;
         private String addressInfo;
         private String bio;
+        private Double latitude;
+        private Double longitude;
+        private int addressChangeCount;
         private String thumbnailProfileImagePath;
         @JsonProperty("isPrivateProfile")
         private boolean isPrivateProfile;
@@ -100,6 +109,9 @@ public class MemberResponseDTO {
             this.date = member.getDate();
             this.addressInfo = member.getAddress() + member.getAddressDetail() + member.getAddressNumber();
             this.bio = member.getBio();
+            this.latitude = member.getLatitude();
+            this.longitude = member.getLongitude();
+            this.addressChangeCount = member.getAddressChangeCount();
             this.thumbnailProfileImagePath = imageFiles.stream()
                     .map(ImageResponseDTO::getImageFilePath)
                     .findFirst()
@@ -131,6 +143,9 @@ public class MemberResponseDTO {
         private String address;
         private String addressDetail;
         private String bio;
+        private Double latitude;
+        private Double longitude;
+        private int addressChangeCount;
         private String thumbnailProfileImagePath;
         @JsonProperty("isPrivateProfile")
         private boolean isPrivateProfile;
@@ -154,6 +169,9 @@ public class MemberResponseDTO {
             this.address = member.getAddress();
             this.addressDetail = member.getAddressDetail();
             this.bio = member.getBio();
+            this.latitude = member.getLatitude();
+            this.longitude = member.getLongitude();
+            this.addressChangeCount = member.getAddressChangeCount();
             this.thumbnailProfileImagePath = thumbnailProfileImagePath;
             this.isPrivateProfile = member.isPrivateProfile();
             this.isLocationVisible = member.isLocationVisible();

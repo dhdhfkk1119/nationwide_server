@@ -12,6 +12,8 @@ import com.nationwide.nationwide_server.follow.FollowRepository;
 import com.nationwide.nationwide_server.image_file.ImageFile;
 import com.nationwide.nationwide_server.image_file.ImageFileService;
 import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
+import com.nationwide.nationwide_server.location.LocationCoordinate;
+import com.nationwide.nationwide_server.location.LocationService;
 import com.nationwide.nationwide_server.member.dto.MemberRequestDTO;
 import com.nationwide.nationwide_server.member.dto.MemberResponseDTO;
 import com.nationwide.nationwide_server.member_terms.MemberTerms;
@@ -27,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.nationwide.nationwide_server._core._enum.ErrorCode.*;
@@ -46,6 +50,7 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final BoardRepository boardRepository;
     private final FollowRepository followRepository;
+    private final LocationService locationService;
 
     // 회원 가입
     @Transactional
@@ -80,6 +85,7 @@ public class MemberService {
 
         member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
         memberRepository.save(member);
+        syncMemberLocation(member, true);
 
         List<MemberTerms> memberTermsList = new ArrayList<>();
 
@@ -101,12 +107,15 @@ public class MemberService {
     }
 
     // 회원 로그인
+    @Transactional
     public MemberResponseDTO.LoginDTO loginMember(MemberRequestDTO.LoginDTO dto){
         Member member = findByLoginId(dto.getLoginId());
 
         if(!bCryptPasswordEncoder.matches(dto.getPassword(), member.getPassword())) {
             throw new Exception401(MEMBER_PASS_NOT_MISMATCH.getMessage());
         }
+
+        syncMemberLocation(member, false);
 
         String accessToken = jwtTokenProvider.createAccessToken(member);
 
@@ -137,6 +146,11 @@ public class MemberService {
             throw new Exception401(MEMBER_NOT_MINE.getMessage());
         }
 
+        boolean isAddressChanging = isAddressChanging(member, updateDTO);
+        if (isAddressChanging && member.getAddressChangeCount() >= 3) {
+            throw new Exception400("도로명 주소는 3회까지만 변경할 수 있습니다.");
+        }
+
         // 기존 이미지 중에 다른 값 있으면 삭제
         if(updateDTO.getImageFileId() != null){
             imageFileService.syncDeleteImages(member,updateDTO.getImageFileId());
@@ -148,6 +162,7 @@ public class MemberService {
         }
 
         member.updateMember(updateDTO);
+        syncMemberLocation(member, isAddressChanging);
     }
 
 
@@ -200,6 +215,50 @@ public class MemberService {
 
     public Member findByLoginId(String loginId){
         return memberRepository.findByLoginId(loginId).orElseThrow(() -> new Exception404(MEMBER_ID_NOT_FOUND.getMessage()));
+    }
+
+    private boolean isAddressChanging(Member member, MemberRequestDTO.UpdateDTO updateDTO) {
+        String nextAddressNumber = updateDTO.getAddressNumber() != null
+                ? updateDTO.getAddressNumber()
+                : member.getAddressNumber();
+        String nextAddress = updateDTO.getAddress() != null ? updateDTO.getAddress() : member.getAddress();
+        String nextAddressDetail = updateDTO.getAddressDetail() != null
+                ? updateDTO.getAddressDetail()
+                : member.getAddressDetail();
+
+        return !Objects.equals(nextAddressNumber, member.getAddressNumber())
+                || !Objects.equals(nextAddress, member.getAddress())
+                || !Objects.equals(nextAddressDetail, member.getAddressDetail());
+    }
+
+    private void syncMemberLocation(Member member, boolean forceRefresh) {
+        String fullAddress = member.getFullAddress();
+
+        if (fullAddress.isBlank()) {
+            member.clearCoordinates();
+            return;
+        }
+
+        if (!forceRefresh
+                && member.hasCoordinates()
+                && fullAddress.equals(member.getGeocodedAddress())) {
+            return;
+        }
+
+        Optional<LocationCoordinate> coordinate = locationService.geocodeRoadAddress(fullAddress);
+        if (coordinate.isPresent()) {
+            LocationCoordinate locationCoordinate = coordinate.get();
+            member.updateCoordinates(
+                    locationCoordinate.latitude(),
+                    locationCoordinate.longitude(),
+                    fullAddress
+            );
+            return;
+        }
+
+        if (forceRefresh) {
+            member.clearCoordinates();
+        }
     }
 
 

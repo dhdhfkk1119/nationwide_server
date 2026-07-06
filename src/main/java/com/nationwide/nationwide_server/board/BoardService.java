@@ -18,6 +18,7 @@ import com.nationwide.nationwide_server._core.util.SessionUser;
 import com.nationwide.nationwide_server.image_file.ImageFile;
 import com.nationwide.nationwide_server.image_file.ImageFileService;
 import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
+import com.nationwide.nationwide_server.location.LocationService;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,7 @@ public class BoardService {
     private final BoardCommentService boardCommentService;
     private final BoardViewService boardViewService;
     private final FollowService followService;
+    private final LocationService locationService;
 
     // 게시물 작성
     @Transactional
@@ -91,6 +93,7 @@ public class BoardService {
     public Slice<BoardResponseDTO.ListDTO> findByBoardList(@LoginUser SessionUser sessionUser, Pageable pageable) {
         Slice<Board> boards = boardRepository.findSlice(pageable);
         Long loginMemberId = sessionUser != null ? sessionUser.getId() : null;
+        Member loginMember = loginMemberId != null ? memberService.findById(loginMemberId) : null;
 
         return boards.map(board -> {
             Long likeCnt = boardLikeService.likeCnt(board.getId());
@@ -102,7 +105,28 @@ public class BoardService {
                     .map(imageFile -> new ImageResponseDTO(imageFile)) // 직접 변환 권장
                     .toList();
 
-            return BoardResponseDTO.ListDTO.of(sessionUser, board,likeCnt,commentCnt, imageFileDTOs,isLike, followStatus);
+            Double distanceKm = null;
+            if (loginMember != null
+                    && !loginMember.getId().equals(board.getMember().getId())
+                    && board.getMember().isLocationVisible()) {
+                distanceKm = locationService.calculateDistanceKm(
+                        loginMember.getLatitude(),
+                        loginMember.getLongitude(),
+                        board.getMember().getLatitude(),
+                        board.getMember().getLongitude()
+                );
+            }
+
+            return BoardResponseDTO.ListDTO.of(
+                    sessionUser,
+                    board,
+                    likeCnt,
+                    commentCnt,
+                    imageFileDTOs,
+                    isLike,
+                    followStatus,
+                    distanceKm
+            );
         });
 
     }

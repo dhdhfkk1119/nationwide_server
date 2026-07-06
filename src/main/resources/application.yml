@@ -56,3 +56,8 @@ jwt:
 board:
   view:
     cooldown-seconds: 1800
+
+app:
+  location:
+    kakao:
+      rest-api-key: ${KAKAO_REST_API_KEY:}
