@@ -99,13 +99,9 @@ public class MemberService {
         emailRepository.deleteByLoginId(saveDTO.getLoginId());
     }
 
-<<<<<<< HEAD
     // 회원 로그인
     @Transactional
     public MemberResponseDTO.LoginDTO loginMember(MemberRequestDTO.LoginDTO dto){
-=======
-    public MemberResponseDTO.LoginDTO loginMember(MemberRequestDTO.LoginDTO dto) {
->>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
         Member member = findByLoginId(dto.getLoginId());
 
         if (!bCryptPasswordEncoder.matches(dto.getPassword(), member.getPassword())) {
@@ -144,7 +140,6 @@ public class MemberService {
             throw new Exception401(MEMBER_NOT_MINE.getMessage());
         }
 
-<<<<<<< HEAD
         boolean isAddressChanging = isAddressChanging(member, updateDTO);
         if (isAddressChanging && member.getAddressChangeCount() >= 3) {
             throw new Exception400("도로명 주소는 3회까지만 변경할 수 있습니다.");
@@ -153,10 +148,6 @@ public class MemberService {
         // 기존 이미지 중에 다른 값 있으면 삭제
         if(updateDTO.getImageFileId() != null){
             imageFileService.syncDeleteImages(member,updateDTO.getImageFileId());
-=======
-        if (updateDTO.getImageFileId() != null) {
-            imageFileService.syncDeleteImages(member, updateDTO.getImageFileId());
->>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
         }
 
         if (file != null && !file.isEmpty()) {
@@ -267,7 +258,6 @@ public class MemberService {
                 .orElseThrow(() -> new Exception404(MEMBER_ID_NOT_FOUND.getMessage()));
     }
 
-<<<<<<< HEAD
     private boolean isAddressChanging(Member member, MemberRequestDTO.UpdateDTO updateDTO) {
         String nextAddressNumber = updateDTO.getAddressNumber() != null
                 ? updateDTO.getAddressNumber()
@@ -312,14 +302,12 @@ public class MemberService {
         }
     }
 
-=======
     public List<MemberResponseDTO.SearchDTO> searchMembers(String query) {
-        String normalized = query == null ? "" : query.trim();
-        if (normalized.isBlank()) {
+        if (query == null || query.isBlank()) {
             return List.of();
         }
->>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
 
+        String normalized = query.trim();
         return memberRepository.searchByNameOrNickName(normalized).stream()
                 .map(MemberResponseDTO.SearchDTO::of)
                 .limit(20)
