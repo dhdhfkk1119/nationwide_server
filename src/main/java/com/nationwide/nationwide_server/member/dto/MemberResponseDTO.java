@@ -6,9 +6,13 @@ import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.m_enum.Gender;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class MemberResponseDTO {
+    private static String formatTimestamp(Timestamp timestamp) {
+        return timestamp == null ? null : timestamp.toInstant().toString();
+    }
 
     @Data
     public static class DetailDTO {
@@ -35,6 +39,14 @@ public class MemberResponseDTO {
         private boolean isPrivateProfile;
         @JsonProperty("isLocationVisible")
         private boolean isLocationVisible;
+        @JsonProperty("isDeactivate")
+        private boolean isDeactivate;
+        private String deactivateDate;
+        private String deactivateUntil;
+        private String deactivateCancelDate;
+        private int deactivateCount;
+        private int remainingDeactivateCount;
+        private boolean canDeactivate;
 
         public DetailDTO(
                 Member member,
@@ -71,6 +83,13 @@ public class MemberResponseDTO {
             this.followingCnt = followingCnt;
             this.isPrivateProfile = member.isPrivateProfile();
             this.isLocationVisible = member.isLocationVisible();
+            this.isDeactivate = member.isDeactivatedNow();
+            this.deactivateDate = formatTimestamp(member.getDeactivateDate());
+            this.deactivateUntil = formatTimestamp(member.getDeactivateUntil());
+            this.deactivateCancelDate = formatTimestamp(member.getDeactivateCancelDate());
+            this.deactivateCount = member.getDeactivateCount();
+            this.remainingDeactivateCount = member.getRemainingDeactivateCount();
+            this.canDeactivate = member.canDeactivate();
         }
     }
 
@@ -151,6 +170,14 @@ public class MemberResponseDTO {
         private boolean isPrivateProfile;
         @JsonProperty("isLocationVisible")
         private boolean isLocationVisible;
+        @JsonProperty("isDeactivate")
+        private boolean isDeactivate;
+        private String deactivateDate;
+        private String deactivateUntil;
+        private String deactivateCancelDate;
+        private int deactivateCount;
+        private int remainingDeactivateCount;
+        private boolean canDeactivate;
 
         public LoginDTO(Member member, String accessToken, String refreshToken, Long expiresIn, String thumbnailProfileImagePath) {
             this.accessToken = accessToken;
@@ -175,6 +202,13 @@ public class MemberResponseDTO {
             this.thumbnailProfileImagePath = thumbnailProfileImagePath;
             this.isPrivateProfile = member.isPrivateProfile();
             this.isLocationVisible = member.isLocationVisible();
+            this.isDeactivate = member.isDeactivatedNow();
+            this.deactivateDate = formatTimestamp(member.getDeactivateDate());
+            this.deactivateUntil = formatTimestamp(member.getDeactivateUntil());
+            this.deactivateCancelDate = formatTimestamp(member.getDeactivateCancelDate());
+            this.deactivateCount = member.getDeactivateCount();
+            this.remainingDeactivateCount = member.getRemainingDeactivateCount();
+            this.canDeactivate = member.canDeactivate();
         }
     }
 
@@ -189,6 +223,52 @@ public class MemberResponseDTO {
             PrivacySettingsDTO dto = new PrivacySettingsDTO();
             dto.isPrivateProfile = member.isPrivateProfile();
             dto.isLocationVisible = member.isLocationVisible();
+            return dto;
+        }
+    }
+
+    @Data
+    public static class DeactivationStatusDTO {
+        @JsonProperty("isDeactivate")
+        private boolean isDeactivate;
+        private String deactivateDate;
+        private String deactivateUntil;
+        private String deactivateCancelDate;
+        private int deactivateCount;
+        private int remainingDeactivateCount;
+        private boolean canDeactivate;
+
+        public static DeactivationStatusDTO of(Member member) {
+            DeactivationStatusDTO dto = new DeactivationStatusDTO();
+            dto.isDeactivate = member.isDeactivatedNow();
+            dto.deactivateDate = formatTimestamp(member.getDeactivateDate());
+            dto.deactivateUntil = formatTimestamp(member.getDeactivateUntil());
+            dto.deactivateCancelDate = formatTimestamp(member.getDeactivateCancelDate());
+            dto.deactivateCount = member.getDeactivateCount();
+            dto.remainingDeactivateCount = member.getRemainingDeactivateCount();
+            dto.canDeactivate = member.canDeactivate();
+            return dto;
+        }
+    }
+
+    @Data
+    public static class SearchDTO {
+        private Long memberIdx;
+        private String name;
+        private String nickName;
+        private String bio;
+        private String thumbnailProfileImagePath;
+
+        public static SearchDTO of(Member member) {
+            SearchDTO dto = new SearchDTO();
+            dto.memberIdx = member.getId();
+            dto.name = member.getName();
+            dto.nickName = member.getNickName();
+            dto.bio = member.getBio();
+            dto.thumbnailProfileImagePath = member.getImageFiles().stream()
+                    .findFirst()
+                    .map(imageFile -> imageFile.getImageFilePath())
+                    .orElse("/uploads/member-images/profile.png");
             return dto;
         }
     }

@@ -35,6 +35,7 @@ public class BoardCommentLikeService {
 
     @Transactional
     public String toggleCommentLike(Long boardCommentIdx, Long memberIdx){
+        memberService.validateActiveMember(memberIdx);
         BoardComment boardComment = boardCommentRepository.findById(boardCommentIdx).orElseThrow(() -> new Exception404(ErrorCode.COMMENT_NOT_FOUND.getMessage()));
         Member member = memberService.findById(memberIdx);
         Board board = boardComment.getBoard();

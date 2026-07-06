@@ -26,10 +26,11 @@ public class FollowService {
     @Transactional
     public FollowResponseDTO.StatusDTO toggleFollow(SessionUser sessionUser, Long targetMemberId) {
         if (sessionUser == null) {
-            throw new Exception400("로그인이 필요합니다.");
+            throw new Exception400("濡쒓렇?몄씠 ?꾩슂?⑸땲??");
         }
+        memberService.validateActiveMember(sessionUser.getId());
         if (sessionUser.getId().equals(targetMemberId)) {
-            throw new Exception400("자기 자신은 팔로우할 수 없습니다.");
+            throw new Exception400("?먭린 ?먯떊? ?붾줈?고븷 ???놁뒿?덈떎.");
         }
 
         Member requester = memberService.findById(sessionUser.getId());
@@ -52,12 +53,13 @@ public class FollowService {
             String action
     ) {
         if (sessionUser == null) {
-            throw new Exception400("로그인이 필요합니다.");
+            throw new Exception400("濡쒓렇?몄씠 ?꾩슂?⑸땲??");
         }
+        memberService.validateActiveMember(sessionUser.getId());
 
         Follow request = followRepository.findByRequesterIdAndTargetId(requesterMemberId, sessionUser.getId());
         if (request == null || request.getRelationStatus() != FollowRelationStatus.REQUESTED) {
-            throw new Exception404("처리할 팔로우 요청을 찾을 수 없습니다.");
+            throw new Exception404("泥섎━???붾줈???붿껌??李얠쓣 ???놁뒿?덈떎.");
         }
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -84,7 +86,7 @@ public class FollowService {
                 request.setProfileVisibleAt(null);
                 alarmService.createFollowRequestRejectedAlarm(request.getTarget(), request.getRequester());
             }
-            default -> throw new Exception400("지원하지 않는 요청 처리 방식입니다.");
+            default -> throw new Exception400("吏?먰븯吏 ?딅뒗 ?붿껌 泥섎━ 諛⑹떇?낅땲??");
         }
 
         return getStatus(sessionUser.getId(), requesterMemberId);
@@ -124,16 +126,16 @@ public class FollowService {
     }
 
     public boolean canViewProfile(Long viewerId, Member target, Follow relation) {
+        if (memberService.isDeactivated(target)) {
+            return viewerId != null && viewerId.equals(target.getId());
+        }
         if (viewerId != null && viewerId.equals(target.getId())) {
             return true;
         }
         if (!target.isPrivateProfile()) {
             return true;
         }
-        if (relation != null && relation.canViewPrivateProfile()) {
-            return true;
-        }
-        return false;
+        return relation != null && relation.canViewPrivateProfile();
     }
 
     public boolean canViewProfile(Long viewerId, Member target) {
@@ -178,7 +180,7 @@ public class FollowService {
             Pageable pageable
     ) {
         if (sessionUser == null) {
-            throw new Exception400("로그인이 필요합니다.");
+            throw new Exception400("濡쒓렇?몄씠 ?꾩슂?⑸땲??");
         }
         return followRepository.findIncomingRequestSlice(sessionUser.getId(), pageable)
                 .map(follow -> FollowResponseDTO.MemberListDTO.of(

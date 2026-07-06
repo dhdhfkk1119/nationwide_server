@@ -49,7 +49,7 @@ public class MyPageService {
     ) {
         Member member = memberService.findById(memberId);
         Long viewerId = sessionUser != null ? sessionUser.getId() : null;
-        if (!followService.canViewProfile(viewerId, member)) {
+        if (!memberService.canExposeMember(member, viewerId) || !followService.canViewProfile(viewerId, member)) {
             return new SliceImpl<>(List.of(), pageable, false);
         }
         Slice<Board> boardSlice = boardRepository.findByMemberId(memberId, pageable);
@@ -62,6 +62,7 @@ public class MyPageService {
                 .toList();
         Long boardCnt = boardRepository.countByMemberId(member.getId());
         FollowResponseDTO.StatusDTO status = followService.getStatus(viewerId, member.getId());
+        boolean canExposeMember = memberService.canExposeMember(member, viewerId);
 
         return MyPageResponseDTO.SummaryDTO.of(
                 member,
@@ -75,7 +76,8 @@ public class MyPageService {
                 status.isHasPendingRequest(),
                 status.getRelationStatus(),
                 status.isFollowing(),
-                status.isFollower()
+                status.isFollower(),
+                canExposeMember
         );
     }
 

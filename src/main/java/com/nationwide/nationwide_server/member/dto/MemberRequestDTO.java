@@ -93,6 +93,11 @@ public class MemberRequestDTO {
     }
 
     @Data
+    public static class DeactivateRequestDTO {
+        private int durationMonths;
+    }
+
+    @Data
     public static class UserMe {
         private String accessToken;
         private String refreshToken;

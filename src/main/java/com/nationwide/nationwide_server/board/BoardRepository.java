@@ -10,8 +10,9 @@ import org.springframework.data.repository.query.Param;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT b FROM Board b " +
-            "JOIN FETCH b.member " +
+            "JOIN FETCH b.member m " +
             "WHERE b.delDate IS NULL " +
+            "AND (m.isDeactivate = false OR m.deactivateUntil IS NULL OR m.deactivateUntil <= CURRENT_TIMESTAMP) " +
             "ORDER BY b.id DESC")
     Slice<Board> findSlice(Pageable pageable);
 
@@ -24,18 +25,22 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     int incrementViewCnt(@Param("boardId") Long boardId);
 
     @Query("SELECT b FROM Board b " +
-            "JOIN FETCH b.member " +
+            "JOIN FETCH b.member m " +
             "WHERE b.id IN (SELECT bl.board.id FROM BoardLike bl WHERE bl.member.id = :memberIdx) " +
             "AND b.delDate IS NULL " +
+            "AND (m.isDeactivate = false OR m.deactivateUntil IS NULL OR m.deactivateUntil <= CURRENT_TIMESTAMP) " +
             "ORDER BY b.id DESC")
     Slice<Board> findFavoriteBoardSlice(@Param("memberIdx") Long memberIdx, Pageable pageable);
 
     @Query("SELECT b FROM Board b " +
-            "JOIN FETCH b.member " +
+            "JOIN FETCH b.member m " +
             "WHERE b.member.id = :memberIdx AND b.delDate IS NULL " +
+            "AND (m.isDeactivate = false OR m.deactivateUntil IS NULL OR m.deactivateUntil <= CURRENT_TIMESTAMP) " +
             "ORDER BY b.id DESC")
     Slice<Board> findByMemberId(@Param("memberIdx") Long memberIdx, Pageable pageable);
 
-    @Query("SELECT COUNT(b) FROM Board b WHERE b.member.id = :memberIdx AND b.delDate IS NULL")
+    @Query("SELECT COUNT(b) FROM Board b JOIN b.member m " +
+            "WHERE b.member.id = :memberIdx AND b.delDate IS NULL " +
+            "AND (m.isDeactivate = false OR m.deactivateUntil IS NULL OR m.deactivateUntil <= CURRENT_TIMESTAMP)")
     Long countByMemberId(@Param("memberIdx") Long memberIdx);
 }

@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <testsuite name="com.nationwide.nationwide_server.NationwideServerApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-03-28T16:04:27.450Z" hostname="WHWJDDN" time="0.528">
   <properties/>
   <testcase name="contextLoads()" classname="com.nationwide.nationwide_server.NationwideServerApplicationTests" time="0.528"/>
   <system-out><![CDATA[01:04:21.717 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.nationwide.nationwide_server.NationwideServerApplicationTests]: NationwideServerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
 01:04:21.789 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.nationwide.nationwide_server.NationwideServerApplication for test class com.nationwide.nationwide_server.NationwideServerApplicationTests
+=======
+<testsuite name="com.nationwide.nationwide_server.NationwideServerApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-03-16T08:40:15.864Z" hostname="DESKTOP-93K324M" time="0.329">
+  <properties/>
+  <testcase name="contextLoads()" classname="com.nationwide.nationwide_server.NationwideServerApplicationTests" time="0.329"/>
+  <system-out><![CDATA[17:40:09.387 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.nationwide.nationwide_server.NationwideServerApplicationTests]: NationwideServerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+17:40:09.489 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.nationwide.nationwide_server.NationwideServerApplication for test class com.nationwide.nationwide_server.NationwideServerApplicationTests
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -14,6 +22,7 @@
 
  :: Spring Boot ::                (v3.3.1)
 
+<<<<<<< HEAD
 2026-03-29T01:04:22.075+09:00  INFO 15836 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : Starting NationwideServerApplicationTests using Java 21.0.7 with PID 15836 (started by whwhw in D:\Project\nationwide_server)
 2026-03-29T01:04:22.076+09:00  INFO 15836 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : No active profile set, falling back to 1 default profile: "default"
 2026-03-29T01:04:22.077+09:00 DEBUG 15836 --- [    Test worker] o.s.boot.SpringApplication               : Loading source class com.nationwide.nationwide_server.NationwideServerApplication
@@ -30,11 +39,30 @@
 2026-03-29T01:04:23.749+09:00  INFO 15836 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
 2026-03-29T01:04:24.528+09:00  INFO 15836 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
 2026-03-29T01:04:24.571+09:00 DEBUG 15836 --- [    Test worker] org.hibernate.SQL                        : 
+=======
+2026-03-16T17:40:09.893+09:00  INFO 18716 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : Starting NationwideServerApplicationTests using Java 21.0.10 with PID 18716 (started by Desktop in C:\workspace\nationwide_server)
+2026-03-16T17:40:09.894+09:00  INFO 18716 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : No active profile set, falling back to 1 default profile: "default"
+2026-03-16T17:40:09.894+09:00 DEBUG 18716 --- [    Test worker] o.s.boot.SpringApplication               : Loading source class com.nationwide.nationwide_server.NationwideServerApplication
+2026-03-16T17:40:09.929+09:00 DEBUG 18716 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@58a4a74d
+2026-03-16T17:40:10.637+09:00  INFO 18716 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-16T17:40:10.654+09:00 DEBUG 18716 --- [    Test worker] o.s.b.a.AutoConfigurationPackages        : @EnableAutoConfiguration was declared on a class in the package 'com.nationwide.nationwide_server'. Automatic @Repository and @Entity scanning is enabled.
+2026-03-16T17:40:10.726+09:00  INFO 18716 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 80 ms. Found 13 JPA repository interfaces.
+2026-03-16T17:40:11.419+09:00  INFO 18716 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-16T17:40:11.478+09:00  INFO 18716 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-03-16T17:40:11.520+09:00  INFO 18716 --- [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-03-16T17:40:11.809+09:00  INFO 18716 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-16T17:40:11.827+09:00  INFO 18716 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-16T17:40:11.944+09:00  INFO 18716 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5c9e3d01
+2026-03-16T17:40:11.945+09:00  INFO 18716 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-03-16T17:40:12.921+09:00  INFO 18716 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-16T17:40:12.952+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
     alter table board_comment_tb 
        modify column content TEXT not null
 Hibernate: 
     alter table board_comment_tb 
        modify column content TEXT not null
+<<<<<<< HEAD
 2026-03-29T01:04:24.670+09:00  INFO 15836 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
 2026-03-29T01:04:25.076+09:00  INFO 15836 --- [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
 2026-03-29T01:04:25.733+09:00  INFO 15836 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: MVConfig.bCryptPasswordEncoder() / 반환값: org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder@57497703
@@ -50,6 +78,46 @@ Hibernate:
 2026-03-29T01:04:27.010+09:00 DEBUG 15836 --- [    Test worker] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
 2026-03-29T01:04:27.041+09:00  WARN 15836 --- [    Test worker] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
 2026-03-29T01:04:27.243+09:00 DEBUG 15836 --- [    Test worker] .s.b.a.l.ConditionEvaluationReportLogger : 
+=======
+2026-03-16T17:40:12.968+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table report_tb 
+       modify column admin_comment TEXT
+Hibernate: 
+    alter table report_tb 
+       modify column admin_comment TEXT
+2026-03-16T17:40:12.974+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table report_tb 
+       modify column reporter_comment TEXT not null
+Hibernate: 
+    alter table report_tb 
+       modify column reporter_comment TEXT not null
+2026-03-16T17:40:12.980+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table report_tb 
+       modify column status enum ('APPROVED','RECEIVED','REJECTED') not null
+Hibernate: 
+    alter table report_tb 
+       modify column status enum ('APPROVED','RECEIVED','REJECTED') not null
+2026-03-16T17:40:12.985+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+    alter table report_tb 
+       modify column target_type enum ('BOARD','COMMENT') not null
+Hibernate: 
+    alter table report_tb 
+       modify column target_type enum ('BOARD','COMMENT') not null
+2026-03-16T17:40:13.063+09:00  INFO 18716 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-16T17:40:13.433+09:00  INFO 18716 --- [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-16T17:40:14.391+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: MVConfig.bCryptPasswordEncoder() / 반환값: org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder@5a32a00a
+2026-03-16T17:40:15.119+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: MVConfig.addInterceptors(..) / 반환값: null
+2026-03-16T17:40:15.123+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: MVConfig.addCorsMappings(..) / 반환값: null
+2026-03-16T17:40:15.215+09:00 DEBUG 18716 --- [    Test worker] s.w.s.m.m.a.RequestMappingHandlerMapping : 52 mappings in 'requestMappingHandlerMapping'
+2026-03-16T17:40:15.351+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: UploadProperties.getRootDir() / 반환값: ./uploads/
+2026-03-16T17:40:15.351+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: MVConfig.addResourceHandlers(..) / 반환값: null
+2026-03-16T17:40:15.358+09:00 DEBUG 18716 --- [    Test worker] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /uploads/**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-03-16T17:40:15.368+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: MVConfig.addArgumentResolvers(..) / 반환값: null
+2026-03-16T17:40:15.398+09:00 DEBUG 18716 --- [    Test worker] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-03-16T17:40:15.444+09:00 DEBUG 18716 --- [    Test worker] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-03-16T17:40:15.484+09:00  WARN 18716 --- [    Test worker] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-03-16T17:40:15.687+09:00 DEBUG 18716 --- [    Test worker] .s.b.a.l.ConditionEvaluationReportLogger : 
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
 
 
 ============================
@@ -1433,9 +1501,15 @@ Unconditional classes:
 
 
 
+<<<<<<< HEAD
 2026-03-29T01:04:27.298+09:00  INFO 15836 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : Started NationwideServerApplicationTests in 5.363 seconds (process running for 6.22)
 2026-03-29T01:04:27.299+09:00 DEBUG 15836 --- [    Test worker] o.s.b.a.ApplicationAvailabilityBean      : Application availability state LivenessState changed to CORRECT
 2026-03-29T01:04:27.354+09:00 DEBUG 15836 --- [    Test worker] org.hibernate.SQL                        : 
+=======
+2026-03-16T17:40:15.709+09:00  INFO 18716 --- [    Test worker] c.n.n.NationwideServerApplicationTests   : Started NationwideServerApplicationTests in 6.088 seconds (process running for 7.063)
+2026-03-16T17:40:15.709+09:00 DEBUG 18716 --- [    Test worker] o.s.b.a.ApplicationAvailabilityBean      : Application availability state LivenessState changed to CORRECT
+2026-03-16T17:40:15.771+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
     select
         count(*) 
     from
@@ -1445,8 +1519,13 @@ Hibernate:
         count(*) 
     from
         terms_tb t1_0
+<<<<<<< HEAD
 2026-03-29T01:04:27.371+09:00  INFO 15836 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: CrudRepository.count() / 반환값: 3
 2026-03-29T01:04:27.389+09:00 DEBUG 15836 --- [    Test worker] org.hibernate.SQL                        : 
+=======
+2026-03-16T17:40:15.777+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: CrudRepository.count() / 반환값: 3
+2026-03-16T17:40:15.807+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
     select
         t1_0.id,
         t1_0.content,
@@ -1464,8 +1543,13 @@ Hibernate:
         t1_0.title 
     from
         terms_tb t1_0
+<<<<<<< HEAD
 2026-03-29T01:04:27.401+09:00  INFO 15836 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: ListCrudRepository.findAll() / 반환값: [Terms(id=1, title=서비스 이용 약관, content=이용 약관 내용 예시입니다., isRequired=true, delDate=null), Terms(id=2, title=개인정보 처리 방침, content=개인정보 처리 방침 내용 예시입니다., isRequired=true, delDate=null), Terms(id=3, title=마케팅 정보 수신 동의, content=마케팅 정보 수신 동의 내용 예시입니다., isRequired=false, delDate=null)]
 2026-03-29T01:04:27.405+09:00 DEBUG 15836 --- [    Test worker] org.hibernate.SQL                        : 
+=======
+2026-03-16T17:40:15.816+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: ListCrudRepository.findAll() / 반환값: [Terms(id=1, title=서비스 이용 약관, content=이용 약관 내용 예시입니다., isRequired=true, delDate=null), Terms(id=2, title=개인정보 처리 방침, content=개인정보 처리 방침 내용 예시입니다., isRequired=true, delDate=null), Terms(id=3, title=마케팅 정보 수신 동의, content=마케팅 정보 수신 동의 내용 예시입니다., isRequired=false, delDate=null)]
+2026-03-16T17:40:15.819+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
     select
         count(*) 
     from
@@ -1475,8 +1559,13 @@ Hibernate:
         count(*) 
     from
         member_tb m1_0
+<<<<<<< HEAD
 2026-03-29T01:04:27.408+09:00  INFO 15836 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: CrudRepository.count() / 반환값: 4
 2026-03-29T01:04:27.411+09:00 DEBUG 15836 --- [    Test worker] org.hibernate.SQL                        : 
+=======
+2026-03-16T17:40:15.824+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: CrudRepository.count() / 반환값: 4
+2026-03-16T17:40:15.824+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
     select
         m1_0.id,
         m1_0.address,
@@ -1487,14 +1576,25 @@ Hibernate:
         m1_0.birth,
         m1_0.created_at,
         m1_0.date,
+        m1_0.deactivate_cancel_date,
+        m1_0.deactivate_count,
+        m1_0.deactivate_date,
+        m1_0.deactivate_until,
         m1_0.del_date,
         m1_0.gender,
+<<<<<<< HEAD
         m1_0.geocoded_address,
+=======
+        m1_0.is_deactivate,
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
         m1_0.is_email_verified,
         m1_0.is_location_visible,
         m1_0.is_phone_verified,
         m1_0.is_private_profile,
+<<<<<<< HEAD
         m1_0.latitude,
+=======
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
         m1_0.login_id,
         m1_0.login_type,
         m1_0.longitude,
@@ -1517,14 +1617,25 @@ Hibernate:
         m1_0.birth,
         m1_0.created_at,
         m1_0.date,
+        m1_0.deactivate_cancel_date,
+        m1_0.deactivate_count,
+        m1_0.deactivate_date,
+        m1_0.deactivate_until,
         m1_0.del_date,
         m1_0.gender,
+<<<<<<< HEAD
         m1_0.geocoded_address,
+=======
+        m1_0.is_deactivate,
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
         m1_0.is_email_verified,
         m1_0.is_location_visible,
         m1_0.is_phone_verified,
         m1_0.is_private_profile,
+<<<<<<< HEAD
         m1_0.latitude,
+=======
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
         m1_0.login_id,
         m1_0.login_type,
         m1_0.longitude,
@@ -1536,8 +1647,13 @@ Hibernate:
         m1_0.user_role 
     from
         member_tb m1_0
+<<<<<<< HEAD
 2026-03-29T01:04:27.423+09:00  INFO 15836 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: ListCrudRepository.findAll() / 반환값: [Member(id=1, name=관리자, nickName=AdminMaster, loginId=admin, password=$2a$10$NhjhW0XttrFgKshcI52SUuc.gytYZxON8ujDalsm1UKXs5HdA5r.6, phoneNumber=010-0000-0000, gender=MALE, birth=1990, date=01-01, addressNumber=12345, address=서울시 강남구, addressDetail=1층, latitude=null, longitude=null, geocodedAddress=null, addressChangeCount=0, bio=null, loginType=LOCAL, createdAt=2025-12-27 19:17:52.189422, updatedAt=null, userRole=ADMIN, delDate=null, isEmailVerified=true, isPhoneVerified=true, isPrivateProfile=false, isLocationVisible=false), Member(id=2, name=정우, nickName=JJW, loginId=user1, password=$2a$10$NhjhW0XttrFgKshcI52SUuc.gytYZxON8ujDalsm1UKXs5HdA5r.6, phoneNumber=010-1111-1111, gender=MALE, birth=1995, date=05-20, addressNumber=54321, address=부산시 해운대구, addressDetail=101호, latitude=null, longitude=null, geocodedAddress=null, addressChangeCount=0, bio=null, loginType=LOCAL, createdAt=2025-12-27 19:17:52.19542, updatedAt=2026-03-15 21:54:27.193096, userRole=USER, delDate=null, isEmailVerified=true, isPhoneVerified=false, isPrivateProfile=true, isLocationVisible=false), Member(id=3, name=민지, nickName=MJ, loginId=user2, password=$2a$10$NhjhW0XttrFgKshcI52SUuc.gytYZxON8ujDalsm1UKXs5HdA5r.6, phoneNumber=010-2222-2222, gender=FEMALE, birth=1998, date=12-10, addressNumber=67890, address=서울시 송파구, addressDetail=201호, latitude=null, longitude=null, geocodedAddress=null, addressChangeCount=0, bio=null, loginType=LOCAL, createdAt=2025-12-27 19:17:52.19642, updatedAt=null, userRole=USER, delDate=null, isEmailVerified=false, isPhoneVerified=false, isPrivateProfile=false, isLocationVisible=false), Member(id=4, name=조정우, nickName=어드민, loginId=whwhwjddn123@gmail.com, password=$2a$10$muUubHpswk1sm8EWZ.hbC.Xc.I2V7mXs60Yzhvua4pXrOnp.C5OBK, phoneNumber=010-5207-6426, gender=MALE, birth=1999, date=0408, addressNumber=62316, address=광주 광산구 2순환로 2474, addressDetail=11, latitude=null, longitude=null, geocodedAddress=null, addressChangeCount=0, bio=null, loginType=null, createdAt=2025-12-27 21:12:51.132849, updatedAt=null, userRole=USER, delDate=null, isEmailVerified=true, isPhoneVerified=false, isPrivateProfile=false, isLocationVisible=false)]
 2026-03-29T01:04:27.431+09:00 DEBUG 15836 --- [    Test worker] org.hibernate.SQL                        : 
+=======
+2026-03-16T17:40:15.839+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: ListCrudRepository.findAll() / 반환값: [Member(id=1, name=관리자, nickName=AdminMaster, loginId=admin, password=$2a$10$tBdptiNf06ulCj0oU1yUa.C89ZhsPMVpeniRzmAeorFLNwiZd1Pju, phoneNumber=010-0000-0000, gender=MALE, birth=1990, date=01-01, addressNumber=12345, address=서울시 강남구, addressDetail=1층, bio=null, loginType=LOCAL, createdAt=2026-03-06 17:13:29.863051, updatedAt=2026-03-06 17:13:29.863051, userRole=ADMIN, delDate=null, isEmailVerified=true, isPhoneVerified=true, isPrivateProfile=false, isLocationVisible=false, isDeactivate=false, deactivateDate=null, deactivateUntil=null, deactivateCancelDate=null, deactivateCount=0), Member(id=2, name=정우, nickName=JJW, loginId=user1, password=$2a$10$tBdptiNf06ulCj0oU1yUa.C89ZhsPMVpeniRzmAeorFLNwiZd1Pju, phoneNumber=010-1111-1111, gender=MALE, birth=1995, date=05-20, addressNumber=54321, address=부산시 해운대구, addressDetail=101호, bio=한줄 소개입니다, loginType=LOCAL, createdAt=2026-03-06 17:13:29.871742, updatedAt=2026-03-16 16:14:00.917891, userRole=USER, delDate=null, isEmailVerified=true, isPhoneVerified=false, isPrivateProfile=false, isLocationVisible=false, isDeactivate=false, deactivateDate=2026-03-16 15:54:44.573, deactivateUntil=null, deactivateCancelDate=2026-03-16 16:14:00.917, deactivateCount=3), Member(id=3, name=민지, nickName=MJ 입니다, loginId=user2, password=$2a$10$tBdptiNf06ulCj0oU1yUa.C89ZhsPMVpeniRzmAeorFLNwiZd1Pju, phoneNumber=01012345678, gender=FEMALE, birth=1998, date=12-10, addressNumber=67890, address=서울시 송파구, addressDetail=201호, bio=한중소개, loginType=LOCAL, createdAt=2026-03-06 17:13:29.875741, updatedAt=2026-03-11 16:17:13.206734, userRole=USER, delDate=null, isEmailVerified=false, isPhoneVerified=false, isPrivateProfile=false, isLocationVisible=false, isDeactivate=false, deactivateDate=null, deactivateUntil=null, deactivateCancelDate=null, deactivateCount=0), Member(id=4, name=짱짱이, nickName=짱짱맨, loginId=whwhwjddn123@gmail.com, password=$2a$10$VYR9rFwQY.GC8gLpFBz5L.AApQF.3YuMMbtX4EEB3/toT0B4wVAam, phoneNumber=010-1111-5555, gender=MALE, birth=1999, date=0408, addressNumber=04627, address=서울 중구 삼일대로2길 70, addressDetail=111, bio=null, loginType=null, createdAt=2026-03-13 15:30:52.683903, updatedAt=2026-03-13 15:30:52.712872, userRole=USER, delDate=null, isEmailVerified=true, isPhoneVerified=false, isPrivateProfile=false, isLocationVisible=false, isDeactivate=false, deactivateDate=null, deactivateUntil=null, deactivateCancelDate=null, deactivateCount=0)]
+2026-03-16T17:40:15.852+09:00 DEBUG 18716 --- [    Test worker] org.hibernate.SQL                        : 
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
     select
         count(*) 
     from
@@ -1547,11 +1663,17 @@ Hibernate:
         count(*) 
     from
         member_terms_tb mt1_0
+<<<<<<< HEAD
 2026-03-29T01:04:27.435+09:00  INFO 15836 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: CrudRepository.count() / 반환값: 12
 2026-03-29T01:04:27.435+09:00  INFO 15836 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: DataLoader.run(..) / 반환값: null
 2026-03-29T01:04:27.436+09:00 DEBUG 15836 --- [    Test worker] o.s.b.a.ApplicationAvailabilityBean      : Application availability state ReadinessState changed to ACCEPTING_TRAFFIC
+=======
+2026-03-16T17:40:15.854+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: CrudRepository.count() / 반환값: 12
+2026-03-16T17:40:15.854+09:00  INFO 18716 --- [    Test worker] c.n.n._core.aop.LoggingAspect            : 메서드 종료: DataLoader.run(..) / 반환값: null
+2026-03-16T17:40:15.855+09:00 DEBUG 18716 --- [    Test worker] o.s.b.a.ApplicationAvailabilityBean      : Application availability state ReadinessState changed to ACCEPTING_TRAFFIC
+>>>>>>> e58ce993e4f8603c87817a4a0dca0713fc5defa5
 ]]></system-out>
-  <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (C:\Users\whwhw\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.14.17\e3c251a39dc90badaf71c83427ba46840f219d8d\byte-buddy-agent-1.14.17.jar)
+  <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (C:\Users\Desktop\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.14.17\e3c251a39dc90badaf71c83427ba46840f219d8d\byte-buddy-agent-1.14.17.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
 WARNING: Dynamic loading of agents will be disallowed by default in a future release

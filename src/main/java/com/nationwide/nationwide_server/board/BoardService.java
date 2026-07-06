@@ -50,6 +50,7 @@ public class BoardService {
     // 게시물 작성
     @Transactional
     public void saveBoard(SessionUser sessionUser,BoardRequestDTO.SaveDTO saveDTO, List<MultipartFile> files){
+        memberService.validateActiveMember(sessionUser.getId());
         Member member = memberService.findById(sessionUser.getId());
         Board board = saveDTO.toEntity(member);
 
@@ -67,6 +68,10 @@ public class BoardService {
     // 게시물 상세 정보
     @Transactional
     public BoardResponseDTO.DetailDTO findByBoardId(@LoginUser SessionUser sessionUser, Long boardIdx){
+        if (sessionUser == null) {
+            throw new Exception401("濡쒓렇?몄씠 ?꾩슂?⑸땲??");
+        }
+
         Board board = findByBoard(boardIdx);
         Member member = memberService.findById(sessionUser.getId());
 
@@ -134,12 +139,25 @@ public class BoardService {
 
     // 게시물 DB 캐쉬 에서 찾기
     public Board findByBoard(Long boardIdx){
-        return boardRepository.findById(boardIdx).orElseThrow(() -> new Exception404(BOARD_NOT_FOUND.getMessage()));
+        Board board = boardRepository.findById(boardIdx)
+                .orElseThrow(() -> new Exception404(BOARD_NOT_FOUND.getMessage()));
+
+        if (memberService.isDeactivated(board.getMember())) {
+            throw new Exception404(BOARD_NOT_FOUND.getMessage());
+        }
+
+        return board;
     }
 
     // 게시물 삭제(del_date 업데이트)
     @Transactional
-    public void deleteBoard(Long boardIdx){
+    public void deleteBoard(SessionUser sessionUser, Long boardIdx){
+        memberService.validateActiveMember(sessionUser.getId());
+        Board board = findByBoard(boardIdx);
+        if (!board.getIsMine(sessionUser.getId())) {
+            throw new Exception401(MEMBER_NOT_MINE.getMessage());
+        }
+
         int result = boardRepository.deleteByIdSoft(boardIdx);
         if(result == 0) throw new Exception404(BOARD_NOT_FOUND.getMessage());
     }
@@ -147,6 +165,7 @@ public class BoardService {
     // 게시물 업데이트하기 (더티체킹)
     @Transactional
     public void updateBoard(SessionUser sessionUser,BoardRequestDTO.UpdateDTO updateDTO,Long idx,List<MultipartFile> newImages){
+        memberService.validateActiveMember(sessionUser.getId());
         Board board = findByBoard(idx);
 
         if(!sessionUser.getId().equals(board.getMember().getId())){

@@ -26,6 +26,7 @@ public class BoardLikeService {
 
     @Transactional
     public String toggleBoardLike(SessionUser sessionUser, Long boardIdx){
+        memberService.validateActiveMember(sessionUser.getId());
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new Exception404(ErrorCode.BOARD_NOT_FOUND.getMessage()));
         Member member = memberService.findById(sessionUser.getId());
