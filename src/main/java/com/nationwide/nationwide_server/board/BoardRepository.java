@@ -13,8 +13,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "JOIN FETCH b.member m " +
             "WHERE b.delDate IS NULL " +
             "AND (m.isDeactivate = false OR m.deactivateUntil IS NULL OR m.deactivateUntil <= CURRENT_TIMESTAMP) " +
+            "AND NOT EXISTS (SELECT 1 FROM MemberBlock mb WHERE (mb.blocker.id = :viewerId AND mb.blocked.id = m.id) OR (mb.blocker.id = m.id AND mb.blocked.id = :viewerId)) " +
+            "AND NOT EXISTS (SELECT 1 FROM PostHide ph WHERE ph.owner.id = m.id AND ph.viewer.id = :viewerId) " +
             "ORDER BY b.id DESC")
-    Slice<Board> findSlice(Pageable pageable);
+    Slice<Board> findSlice(@Param("viewerId") Long viewerId, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Board b SET b.delDate = CURRENT_TIMESTAMP WHERE b.id = :boardIdx")
@@ -29,6 +31,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "WHERE b.id IN (SELECT bl.board.id FROM BoardLike bl WHERE bl.member.id = :memberIdx) " +
             "AND b.delDate IS NULL " +
             "AND (m.isDeactivate = false OR m.deactivateUntil IS NULL OR m.deactivateUntil <= CURRENT_TIMESTAMP) " +
+            "AND NOT EXISTS (SELECT 1 FROM MemberBlock mb WHERE (mb.blocker.id = :memberIdx AND mb.blocked.id = m.id) OR (mb.blocker.id = m.id AND mb.blocked.id = :memberIdx)) " +
+            "AND NOT EXISTS (SELECT 1 FROM PostHide ph WHERE ph.owner.id = m.id AND ph.viewer.id = :memberIdx) " +
             "ORDER BY b.id DESC")
     Slice<Board> findFavoriteBoardSlice(@Param("memberIdx") Long memberIdx, Pageable pageable);
 

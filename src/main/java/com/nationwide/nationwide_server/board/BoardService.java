@@ -21,6 +21,8 @@ import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
 import com.nationwide.nationwide_server.location.LocationService;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.MemberService;
+import com.nationwide.nationwide_server.member_block.MemberBlockService;
+import com.nationwide.nationwide_server.post_hide.PostHideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -46,6 +48,8 @@ public class BoardService {
     private final BoardViewService boardViewService;
     private final FollowService followService;
     private final LocationService locationService;
+    private final MemberBlockService memberBlockService;
+    private final PostHideService postHideService;
 
     // 게시물 작성
     @Transactional
@@ -75,6 +79,11 @@ public class BoardService {
         Board board = findByBoard(boardIdx);
         Member member = memberService.findById(sessionUser.getId());
 
+        if (memberBlockService.isBlockedEitherWay(board.getMember().getId(), member.getId())
+                || postHideService.isHiddenFromViewer(board.getMember().getId(), member.getId())) {
+            throw new Exception404(BOARD_NOT_FOUND.getMessage());
+        }
+
         boolean shouldIncreaseViewCnt = boardViewService.shouldIncreaseViewCnt(board, member);
         if (shouldIncreaseViewCnt) {
             boardRepository.incrementViewCnt(board.getId());
@@ -96,8 +105,8 @@ public class BoardService {
     
     // 게시물 리스트 정보
     public Slice<BoardResponseDTO.ListDTO> findByBoardList(@LoginUser SessionUser sessionUser, Pageable pageable) {
-        Slice<Board> boards = boardRepository.findSlice(pageable);
         Long loginMemberId = sessionUser != null ? sessionUser.getId() : null;
+        Slice<Board> boards = boardRepository.findSlice(loginMemberId, pageable);
         Member loginMember = loginMemberId != null ? memberService.findById(loginMemberId) : null;
 
         return boards.map(board -> {

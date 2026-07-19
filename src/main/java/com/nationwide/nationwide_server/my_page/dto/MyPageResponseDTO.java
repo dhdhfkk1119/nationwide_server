@@ -34,6 +34,19 @@ public class MyPageResponseDTO {
         private boolean isFollower;
         @JsonProperty("isFollow")
         private boolean isFollow;
+        @JsonProperty("isBlocking")
+        private boolean isBlocking;
+        @JsonProperty("isBlockedByOther")
+        private boolean isBlockedByOther;
+        @JsonProperty("isHidingFromOther")
+        private boolean isHidingFromOther;
+        // 이 계정 정보 팝업용
+        private String createdAt;
+        private String location;
+        @JsonProperty("isPhoneVerified")
+        private boolean isPhoneVerified;
+        @JsonProperty("canMessage")
+        private boolean canMessage;
 
         public static SummaryDTO of(
                 Member member,
@@ -48,12 +61,16 @@ public class MyPageResponseDTO {
                 String relationStatus,
                 boolean isFollowing,
                 boolean isFollower,
-                boolean canExposeMember
+                boolean canExposeMember,
+                boolean isBlocking,
+                boolean isBlockedByOther,
+                boolean isHidingFromOther,
+                boolean canMessage
         ) {
             SummaryDTO dto = new SummaryDTO();
             dto.memberIdx = member.getId();
             dto.name = canExposeMember ? member.getName() : DEACTIVATED_MEMBER_NAME;
-            dto.nickName = canExposeMember ? member.getNickName() : null;
+            dto.nickName = canExposeMember ? member.getDisplayNickName() : null;
             dto.bio = canExposeMember ? member.getBio() : null;
             dto.thumbnailProfileImagePath = canExposeMember
                     ? imageFiles.stream()
@@ -77,6 +94,13 @@ public class MyPageResponseDTO {
             dto.isFollowing = isFollowing;
             dto.isFollower = isFollower;
             dto.isFollow = isFollowing && isFollower;
+            dto.isBlocking = isBlocking;
+            dto.isBlockedByOther = isBlockedByOther;
+            dto.isHidingFromOther = isHidingFromOther;
+            dto.createdAt = member.getCreatedAt() == null ? null : member.getCreatedAt().toInstant().toString();
+            dto.location = canExposeMember && member.isLocationVisible() ? member.getFullAddress() : null;
+            dto.isPhoneVerified = canExposeMember && member.isPhoneVerified();
+            dto.canMessage = canMessage;
             return dto;
         }
     }
@@ -111,9 +135,7 @@ public class MyPageResponseDTO {
             dto.commentCreatedAt = boardComment.getCreatedTime();
             dto.boardTitle = board.getTitle();
             dto.boardContent = board.getContent();
-            dto.boardAuthorName = board.getMember().getNickName() != null && !board.getMember().getNickName().isBlank()
-                    ? board.getMember().getNickName()
-                    : board.getMember().getName();
+            dto.boardAuthorName = board.getMember().getDisplayNickName();
             dto.boardAuthorThumbnailProfileImagePath = board.getMember().getImageFiles().stream()
                     .findFirst()
                     .map(imageFile -> imageFile.getImageFilePath())

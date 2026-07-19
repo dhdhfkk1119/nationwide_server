@@ -2,6 +2,7 @@ package com.nationwide.nationwide_server.report.dto;
 
 import com.nationwide.nationwide_server.board.Board;
 import com.nationwide.nationwide_server.board_comment.BoardComment;
+import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.report.Report;
 import lombok.Data;
 
@@ -32,6 +33,16 @@ public class ReportResponseDTO {
             dto.targetContent = board.getContent();
             dto.boardId = board.getId();
             dto.targetImagePath = board.getImageFiles().stream()
+                    .findFirst()
+                    .map(image -> image.getImageFilePath())
+                    .orElse(null);
+            return dto;
+        }
+
+        public static ItemDTO ofMember(Report report, Member member) {
+            ItemDTO dto = common(report);
+            dto.targetContent = member.getDisplayNickName();
+            dto.targetImagePath = member.getImageFiles().stream()
                     .findFirst()
                     .map(image -> image.getImageFilePath())
                     .orElse(null);

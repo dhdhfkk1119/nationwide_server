@@ -11,8 +11,7 @@ import lombok.Data;
 public class AlarmResponseDTO {
 
     private static String actorName(Member actor) {
-        String nickName = actor.getNickName();
-        return nickName != null && !nickName.isBlank() ? nickName : actor.getName();
+        return actor.getDisplayNickName();
     }
 
     private static String actorThumbnail(Member actor) {

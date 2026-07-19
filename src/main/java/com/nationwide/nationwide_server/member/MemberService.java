@@ -8,6 +8,7 @@ import com.nationwide.nationwide_server._core.util.SessionUser;
 import com.nationwide.nationwide_server.board.BoardRepository;
 import com.nationwide.nationwide_server.email.EmailRepository;
 import com.nationwide.nationwide_server.email.EmailService;
+import com.nationwide.nationwide_server.follow.Follow;
 import com.nationwide.nationwide_server.follow.FollowRepository;
 import com.nationwide.nationwide_server.image_file.ImageFile;
 import com.nationwide.nationwide_server.image_file.ImageFileService;
@@ -16,12 +17,14 @@ import com.nationwide.nationwide_server.location.LocationCoordinate;
 import com.nationwide.nationwide_server.location.LocationService;
 import com.nationwide.nationwide_server.member.dto.MemberRequestDTO;
 import com.nationwide.nationwide_server.member.dto.MemberResponseDTO;
+import com.nationwide.nationwide_server.message.MessagePermissionService;
 import com.nationwide.nationwide_server.member_terms.MemberTerms;
 import com.nationwide.nationwide_server.member_terms.MemberTermsRepository;
 import com.nationwide.nationwide_server.terms.Terms;
 import com.nationwide.nationwide_server.terms.TermsRepository;
 import com.nationwide.nationwide_server.terms.TermsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,10 +61,15 @@ public class MemberService {
     private final BoardRepository boardRepository;
     private final FollowRepository followRepository;
     private final LocationService locationService;
+    private final MessagePermissionService messagePermissionService;
 
     @Transactional
     public void save(MemberRequestDTO.SaveDTO saveDTO) {
         Member member = saveDTO.toEntity();
+
+        if (member.getNickName() != null && member.getNickName().length() > Member.MAX_NICKNAME_LENGTH) {
+            throw new Exception400("닉네임은 최대 " + Member.MAX_NICKNAME_LENGTH + "자까지 입력할 수 있습니다.");
+        }
 
         emailService.findByLoginId(saveDTO.getLoginId());
 
@@ -82,6 +91,7 @@ public class MemberService {
         }
 
         member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
+        member.setEmail(saveDTO.getLoginId());
         memberRepository.save(member);
         syncMemberLocation(member, true);
 
@@ -101,7 +111,7 @@ public class MemberService {
 
     // 회원 로그인
     @Transactional
-    public MemberResponseDTO.LoginDTO loginMember(MemberRequestDTO.LoginDTO dto){
+    public MemberResponseDTO.LoginDTO loginMember(MemberRequestDTO.LoginDTO dto, String ipAddress){
         Member member = findByLoginId(dto.getLoginId());
 
         if (!bCryptPasswordEncoder.matches(dto.getPassword(), member.getPassword())) {
@@ -109,6 +119,7 @@ public class MemberService {
         }
 
         syncMemberLocation(member, false);
+        emailService.notifyIfNewLoginLocation(member, ipAddress);
 
         String accessToken = jwtTokenProvider.createAccessToken(member);
         String refreshToken = dto.isAutoLogin() ? jwtTokenProvider.createRefreshToken(member) : null;
@@ -141,8 +152,12 @@ public class MemberService {
         }
 
         boolean isAddressChanging = isAddressChanging(member, updateDTO);
-        if (isAddressChanging && member.getAddressChangeCount() >= 3) {
-            throw new Exception400("도로명 주소는 3회까지만 변경할 수 있습니다.");
+        if (isAddressChanging && !member.canChangeAddress()) {
+            throw new Exception400("도로명 주소는 최대 " + Member.MAX_ADDRESS_CHANGE_COUNT + "회까지만 변경할 수 있습니다.");
+        }
+
+        if (updateDTO.getNickName() != null && updateDTO.getNickName().length() > Member.MAX_NICKNAME_LENGTH) {
+            throw new Exception400("닉네임은 최대 " + Member.MAX_NICKNAME_LENGTH + "자까지 입력할 수 있습니다.");
         }
 
         // 기존 이미지 중에 다른 값 있으면 삭제
@@ -186,7 +201,7 @@ public class MemberService {
         }
 
         Member member = findById(sessionUser.getId());
-        member.updatePrivacySettings(dto.isPrivateProfile(), dto.isLocationVisible());
+        member.updatePrivacySettings(dto.isPrivateProfile(), dto.isLocationVisible(), dto.getMessagePermission());
         return MemberResponseDTO.PrivacySettingsDTO.of(member);
     }
 
@@ -300,6 +315,136 @@ public class MemberService {
         if (forceRefresh) {
             member.clearCoordinates();
         }
+    }
+
+    @Transactional
+    public MemberResponseDTO.CurrentLocationDTO updateCurrentLocation(
+            SessionUser sessionUser,
+            MemberRequestDTO.CurrentLocationDTO dto
+    ) {
+        if (sessionUser == null) {
+            throw new Exception401("로그인이 필요합니다.");
+        }
+        if (dto.getLatitude() == null || dto.getLongitude() == null) {
+            throw new Exception400("위치 좌표가 올바르지 않습니다.");
+        }
+
+        Member member = findById(sessionUser.getId());
+
+        LocationService.ReverseGeocodeResult result = locationService
+                .reverseGeocode(dto.getLatitude(), dto.getLongitude())
+                .orElseThrow(() -> new Exception400("위치를 확인할 수 없습니다."));
+
+        member.updateCurrentLocation(
+                dto.getLatitude(),
+                dto.getLongitude(),
+                result.address(),
+                result.address1(),
+                result.address2(),
+                "AUTO"
+        );
+
+        return MemberResponseDTO.CurrentLocationDTO.of(member);
+    }
+
+    @Transactional
+    public MemberResponseDTO.CurrentLocationDTO updateCurrentLocationManually(
+            SessionUser sessionUser,
+            MemberRequestDTO.ManualLocationDTO dto
+    ) {
+        if (sessionUser == null) {
+            throw new Exception401("로그인이 필요합니다.");
+        }
+        if (dto.getFullAddress() == null || dto.getFullAddress().isBlank()) {
+            throw new Exception400("주소를 입력해주세요.");
+        }
+
+        Member member = findById(sessionUser.getId());
+
+        LocationCoordinate coordinate = locationService
+                .geocodeAddressViaNaver(dto.getFullAddress())
+                .orElseThrow(() -> new Exception400("주소로 위치를 찾을 수 없습니다."));
+
+        member.updateCurrentLocation(
+                coordinate.latitude(),
+                coordinate.longitude(),
+                dto.getAddress(),
+                dto.getAddress1(),
+                dto.getAddress2(),
+                "MANUAL"
+        );
+
+        return MemberResponseDTO.CurrentLocationDTO.of(member);
+    }
+
+    @Transactional
+    public MemberResponseDTO.CurrentLocationDTO clearCurrentLocation(SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new Exception401("로그인이 필요합니다.");
+        }
+
+        Member member = findById(sessionUser.getId());
+        member.clearCurrentLocation();
+        return MemberResponseDTO.CurrentLocationDTO.of(member);
+    }
+
+    public MemberResponseDTO.NearbyMemberListDTO findNearbyMembers(
+            SessionUser sessionUser,
+            double radiusKm,
+            Pageable pageable
+    ) {
+        if (sessionUser == null) {
+            throw new Exception401("로그인이 필요합니다.");
+        }
+        if (radiusKm < 1 || radiusKm > 1000) {
+            throw new Exception400("반경은 1km에서 1000km 사이로 설정해주세요.");
+        }
+
+        Member viewer = findById(sessionUser.getId());
+        if (!viewer.hasCoordinates()) {
+            throw new Exception400("먼저 현재 위치를 설정해주세요.");
+        }
+
+        double latDelta = radiusKm / 111.0;
+        double lngDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(viewer.getLatitude())));
+
+        int limit = pageable.getPageSize() + 1;
+        int offset = (int) pageable.getOffset();
+
+        List<MemberRepository.NearbyMemberProjection> projections = memberRepository.findNearbyMemberIds(
+                viewer.getId(),
+                viewer.getLatitude(),
+                viewer.getLongitude(),
+                radiusKm,
+                viewer.getLatitude() - latDelta,
+                viewer.getLatitude() + latDelta,
+                viewer.getLongitude() - lngDelta,
+                viewer.getLongitude() + lngDelta,
+                limit,
+                offset
+        );
+
+        boolean hasNext = projections.size() > pageable.getPageSize();
+        List<MemberRepository.NearbyMemberProjection> pageProjections = hasNext
+                ? projections.subList(0, pageable.getPageSize())
+                : projections;
+
+        Map<Long, Member> memberById = memberRepository.findAllById(
+                pageProjections.stream().map(MemberRepository.NearbyMemberProjection::getId).toList()
+        ).stream().collect(Collectors.toMap(Member::getId, member -> member));
+
+        List<MemberResponseDTO.NearbyMemberDTO> content = pageProjections.stream()
+                .filter(projection -> memberById.containsKey(projection.getId()))
+                .map(projection -> {
+                    Member nearbyMember = memberById.get(projection.getId());
+                    boolean canMessage = messagePermissionService.canSendMessage(viewer, nearbyMember);
+                    Follow relation = followRepository.findByRequesterIdAndTargetId(viewer.getId(), nearbyMember.getId());
+                    boolean isFollowing = relation != null && relation.isActiveFollowing();
+                    return MemberResponseDTO.NearbyMemberDTO.of(nearbyMember, projection.getDistanceKm(), canMessage, isFollowing);
+                })
+                .toList();
+
+        return MemberResponseDTO.NearbyMemberListDTO.of(content, hasNext);
     }
 
     public List<MemberResponseDTO.SearchDTO> searchMembers(String query) {

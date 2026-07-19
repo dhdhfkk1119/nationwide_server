@@ -54,7 +54,11 @@ public class MVConfig implements WebMvcConfigurer {
                         "/api/terms/list",
                         "/api/emails/**",
                         "/api/terms/**",
-                        "/uploads/**"
+                        "/api/naver/**",
+                        "/api/kakao/**",
+                        "/api/google/**",
+                        "/uploads/**",
+                        "/ws/**"
                 );
     }
 

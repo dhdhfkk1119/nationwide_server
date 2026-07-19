@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.m_enum.Gender;
+import com.nationwide.nationwide_server.member.m_enum.MessagePermission;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -19,6 +20,7 @@ public class MemberResponseDTO {
         private Long memberIdx;
         private String name;
         private String nickName;
+        private String displayName;
         private String phoneNumber;
         private String createdAt;
         private Gender gender;
@@ -29,6 +31,15 @@ public class MemberResponseDTO {
         private Double latitude;
         private Double longitude;
         private int addressChangeCount;
+        @JsonProperty("hasCurrentLocation")
+        private boolean hasCurrentLocation;
+        private String currentLocationAddress;
+        private String currentLocationAddress1;
+        private String currentLocationAddress2;
+        private String locationSource;
+        private int remainingAddressChangeCount;
+        @JsonProperty("canChangeAddress")
+        private boolean canChangeAddress;
         private String thumbnailProfileImagePath;
         private List<String> profileImagePath;
         private List<String> imageFilesId;
@@ -39,6 +50,7 @@ public class MemberResponseDTO {
         private boolean isPrivateProfile;
         @JsonProperty("isLocationVisible")
         private boolean isLocationVisible;
+        private MessagePermission messagePermission;
         @JsonProperty("isDeactivate")
         private boolean isDeactivate;
         private String deactivateDate;
@@ -58,6 +70,7 @@ public class MemberResponseDTO {
             this.memberIdx = member.getId();
             this.name = member.getName();
             this.nickName = member.getNickName();
+            this.displayName = member.getDisplayNickName();
             this.phoneNumber = member.getPhoneNumber();
             this.createdAt = member.getTime();
             this.gender = member.getGender();
@@ -68,6 +81,13 @@ public class MemberResponseDTO {
             this.latitude = member.getLatitude();
             this.longitude = member.getLongitude();
             this.addressChangeCount = member.getAddressChangeCount();
+            this.hasCurrentLocation = member.hasCoordinates();
+            this.currentLocationAddress = member.getCurrentLocationAddress();
+            this.currentLocationAddress1 = member.getCurrentLocationAddress1();
+            this.currentLocationAddress2 = member.getCurrentLocationAddress2();
+            this.locationSource = member.getLocationSource();
+            this.remainingAddressChangeCount = member.getRemainingAddressChangeCount();
+            this.canChangeAddress = member.canChangeAddress();
             this.thumbnailProfileImagePath = imageFiles.stream()
                     .map(ImageResponseDTO::getImageFilePath)
                     .findFirst()
@@ -83,6 +103,7 @@ public class MemberResponseDTO {
             this.followingCnt = followingCnt;
             this.isPrivateProfile = member.isPrivateProfile();
             this.isLocationVisible = member.isLocationVisible();
+            this.messagePermission = member.getMessagePermission();
             this.isDeactivate = member.isDeactivatedNow();
             this.deactivateDate = formatTimestamp(member.getDeactivateDate());
             this.deactivateUntil = formatTimestamp(member.getDeactivateUntil());
@@ -213,16 +234,38 @@ public class MemberResponseDTO {
     }
 
     @Data
+    public static class CurrentLocationDTO {
+        @JsonProperty("hasCurrentLocation")
+        private boolean hasCurrentLocation;
+        private String currentLocationAddress;
+        private String currentLocationAddress1;
+        private String currentLocationAddress2;
+        private String locationSource;
+
+        public static CurrentLocationDTO of(Member member) {
+            CurrentLocationDTO dto = new CurrentLocationDTO();
+            dto.hasCurrentLocation = member.hasCoordinates();
+            dto.currentLocationAddress = member.getCurrentLocationAddress();
+            dto.currentLocationAddress1 = member.getCurrentLocationAddress1();
+            dto.currentLocationAddress2 = member.getCurrentLocationAddress2();
+            dto.locationSource = member.getLocationSource();
+            return dto;
+        }
+    }
+
+    @Data
     public static class PrivacySettingsDTO {
         @JsonProperty("isPrivateProfile")
         private boolean isPrivateProfile;
         @JsonProperty("isLocationVisible")
         private boolean isLocationVisible;
+        private MessagePermission messagePermission;
 
         public static PrivacySettingsDTO of(Member member) {
             PrivacySettingsDTO dto = new PrivacySettingsDTO();
             dto.isPrivateProfile = member.isPrivateProfile();
             dto.isLocationVisible = member.isLocationVisible();
+            dto.messagePermission = member.getMessagePermission();
             return dto;
         }
     }
@@ -252,6 +295,49 @@ public class MemberResponseDTO {
     }
 
     @Data
+    public static class NearbyMemberDTO {
+        private Long memberIdx;
+        private String name;
+        private String nickName;
+        private String bio;
+        private String thumbnailProfileImagePath;
+        private Double distanceKm;
+        @JsonProperty("canMessage")
+        private boolean canMessage;
+        @JsonProperty("isFollowing")
+        private boolean isFollowing;
+
+        public static NearbyMemberDTO of(Member member, Double distanceKm, boolean canMessage, boolean isFollowing) {
+            NearbyMemberDTO dto = new NearbyMemberDTO();
+            dto.memberIdx = member.getId();
+            dto.name = member.getName();
+            dto.nickName = member.getDisplayNickName();
+            dto.bio = member.getBio();
+            dto.thumbnailProfileImagePath = member.getImageFiles().stream()
+                    .findFirst()
+                    .map(imageFile -> imageFile.getImageFilePath())
+                    .orElse("/uploads/member-images/profile.png");
+            dto.distanceKm = distanceKm == null ? null : Math.round(distanceKm * 10.0) / 10.0;
+            dto.canMessage = canMessage;
+            dto.isFollowing = isFollowing;
+            return dto;
+        }
+    }
+
+    @Data
+    public static class NearbyMemberListDTO {
+        private List<NearbyMemberDTO> content;
+        private boolean hasNext;
+
+        public static NearbyMemberListDTO of(List<NearbyMemberDTO> content, boolean hasNext) {
+            NearbyMemberListDTO dto = new NearbyMemberListDTO();
+            dto.content = content;
+            dto.hasNext = hasNext;
+            return dto;
+        }
+    }
+
+    @Data
     public static class SearchDTO {
         private Long memberIdx;
         private String name;
@@ -263,7 +349,7 @@ public class MemberResponseDTO {
             SearchDTO dto = new SearchDTO();
             dto.memberIdx = member.getId();
             dto.name = member.getName();
-            dto.nickName = member.getNickName();
+            dto.nickName = member.getDisplayNickName();
             dto.bio = member.getBio();
             dto.thumbnailProfileImagePath = member.getImageFiles().stream()
                     .findFirst()

@@ -86,6 +86,33 @@ public class ReportService {
         );
     }
 
+    @Transactional
+    public void reportMember(SessionUser sessionUser, Long memberId, ReportRequestDTO.CreateDTO dto) {
+        Member reporter = validateReporter(sessionUser);
+        Member target = memberService.findById(memberId);
+
+        if (target.getId().equals(reporter.getId())) {
+            throw new Exception400("본인은 신고할 수 없습니다.");
+        }
+        validateReporterComment(dto.getReporterComment());
+        validateDuplicate(
+                reporter.getId(),
+                ReportTargetType.MEMBER,
+                memberId,
+                "본인이 이미 해당 유저를 신고했습니다.\n신고 처리 완료 이후 가능합니다."
+        );
+
+        reportRepository.save(
+                Report.builder()
+                        .reporter(reporter)
+                        .targetType(ReportTargetType.MEMBER)
+                        .targetId(memberId)
+                        .reporterComment(dto.getReporterComment().trim())
+                        .status(ReportStatus.RECEIVED)
+                        .build()
+        );
+    }
+
     public ReportResponseDTO.ReportListDTO myReports(SessionUser sessionUser, ReportTargetType targetType) {
         if (sessionUser == null) {
             throw new Exception401("로그인이 필요합니다.");
@@ -127,11 +154,12 @@ public class ReportService {
                     .orElseThrow(() -> new Exception404("게시물을 찾을 수 없습니다."));
             board.setDelDate(new Timestamp(System.currentTimeMillis()));
             boardCommentRepository.deleteByBoardIdSoft(board.getId());
-        } else {
+        } else if (report.getTargetType() == ReportTargetType.COMMENT) {
             BoardComment comment = boardCommentRepository.findById(report.getTargetId())
                     .orElseThrow(() -> new Exception404("댓글을 찾을 수 없습니다."));
             comment.setDelDate(new Timestamp(System.currentTimeMillis()));
         }
+        // MEMBER 신고는 자동 처리 대상이 없어 승인 상태만 기록하고, 후속 제재는 관리자가 별도로 처리한다.
 
         report.approve(admin, dto.getAdminComment().trim());
         return mapReport(report);
@@ -156,6 +184,11 @@ public class ReportService {
             Board board = boardRepository.findById(report.getTargetId())
                     .orElseThrow(() -> new Exception404("게시물을 찾을 수 없습니다."));
             return ReportResponseDTO.ItemDTO.ofBoard(report, board);
+        }
+
+        if (report.getTargetType() == ReportTargetType.MEMBER) {
+            Member member = memberService.findById(report.getTargetId());
+            return ReportResponseDTO.ItemDTO.ofMember(report, member);
         }
 
         BoardComment comment = boardCommentRepository.findById(report.getTargetId())

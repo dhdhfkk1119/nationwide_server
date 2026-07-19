@@ -7,6 +7,8 @@ import com.nationwide.nationwide_server.alarm.AlarmService;
 import com.nationwide.nationwide_server.follow.dto.FollowResponseDTO;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.MemberService;
+import com.nationwide.nationwide_server.member_block.MemberBlockService;
+import com.nationwide.nationwide_server.post_hide.PostHideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,6 +24,8 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final MemberService memberService;
     private final AlarmService alarmService;
+    private final MemberBlockService memberBlockService;
+    private final PostHideService postHideService;
 
     @Transactional
     public FollowResponseDTO.StatusDTO toggleFollow(SessionUser sessionUser, Long targetMemberId) {
@@ -114,6 +118,10 @@ public class FollowService {
         Long followerCnt = followRepository.countFollowersByMemberId(targetMemberId);
         Long followingCnt = followRepository.countFollowingByMemberId(targetMemberId);
 
+        boolean isBlocking = memberBlockService.isBlocking(viewerId, targetMemberId);
+        boolean isBlockedByOther = memberBlockService.isBlocking(targetMemberId, viewerId);
+        boolean isHidingFromOther = postHideService.isHiddenFromViewer(viewerId, targetMemberId);
+
         return FollowResponseDTO.StatusDTO.of(
                 isFollowing,
                 isFollowedBy,
@@ -121,7 +129,10 @@ public class FollowService {
                 canViewProfile,
                 relationStatus,
                 followerCnt,
-                followingCnt
+                followingCnt,
+                isBlocking,
+                isBlockedByOther,
+                isHidingFromOther
         );
     }
 

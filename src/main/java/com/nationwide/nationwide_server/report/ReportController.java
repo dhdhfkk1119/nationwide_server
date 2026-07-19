@@ -41,6 +41,16 @@ public class ReportController {
         return ResponseEntity.ok(ApiUtil.success("댓글 신고가 접수되었습니다."));
     }
 
+    @PostMapping("/reports/members/{memberId}")
+    public ResponseEntity<?> reportMember(
+            @LoginUser SessionUser sessionUser,
+            @PathVariable("memberId") Long memberId,
+            @RequestBody ReportRequestDTO.CreateDTO dto
+    ) {
+        reportService.reportMember(sessionUser, memberId, dto);
+        return ResponseEntity.ok(ApiUtil.success("유저 신고가 접수되었습니다."));
+    }
+
     @GetMapping("/reports/me")
     public ResponseEntity<?> myReports(
             @LoginUser SessionUser sessionUser,

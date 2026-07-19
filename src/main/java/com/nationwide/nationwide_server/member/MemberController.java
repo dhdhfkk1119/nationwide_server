@@ -4,11 +4,16 @@ import com.nationwide.nationwide_server._core._custom_annotation.LoginUser;
 import com.nationwide.nationwide_server._core._enum.ResourceType;
 import com.nationwide.nationwide_server._core.errors.exception.Exception401;
 import com.nationwide.nationwide_server._core.util.ApiUtil;
+import com.nationwide.nationwide_server._core.util.IpAddressUtil;
 import com.nationwide.nationwide_server._core.util.SessionUser;
 import com.nationwide.nationwide_server.member.dto.MemberRequestDTO;
 import com.nationwide.nationwide_server.member.dto.MemberResponseDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,8 +59,12 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginMember(@RequestBody MemberRequestDTO.LoginDTO dto) {
-        MemberResponseDTO.LoginDTO loginDTO = memberService.loginMember(dto);
+    public ResponseEntity<?> loginMember(
+            @RequestBody MemberRequestDTO.LoginDTO dto,
+            HttpServletRequest request
+    ) {
+        String ipAddress = IpAddressUtil.resolveClientIp(request);
+        MemberResponseDTO.LoginDTO loginDTO = memberService.loginMember(dto, ipAddress);
         return ResponseEntity.ok(ApiUtil.success(loginDTO));
     }
 
@@ -91,6 +100,39 @@ public class MemberController {
     public ResponseEntity<?> cancelDeactivation(@LoginUser SessionUser sessionUser) {
         MemberResponseDTO.DeactivationStatusDTO response = memberService.cancelDeactivation(sessionUser);
         return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
+    @PutMapping("/current-location")
+    public ResponseEntity<?> updateCurrentLocation(
+            @LoginUser SessionUser sessionUser,
+            @RequestBody MemberRequestDTO.CurrentLocationDTO dto
+    ) {
+        MemberResponseDTO.CurrentLocationDTO response = memberService.updateCurrentLocation(sessionUser, dto);
+        return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
+    @PutMapping("/current-location/manual")
+    public ResponseEntity<?> updateCurrentLocationManually(
+            @LoginUser SessionUser sessionUser,
+            @RequestBody MemberRequestDTO.ManualLocationDTO dto
+    ) {
+        MemberResponseDTO.CurrentLocationDTO response = memberService.updateCurrentLocationManually(sessionUser, dto);
+        return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
+    @DeleteMapping("/current-location")
+    public ResponseEntity<?> clearCurrentLocation(@LoginUser SessionUser sessionUser) {
+        MemberResponseDTO.CurrentLocationDTO response = memberService.clearCurrentLocation(sessionUser);
+        return ResponseEntity.ok(ApiUtil.success(response));
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<?> nearbyMembers(
+            @LoginUser SessionUser sessionUser,
+            @RequestParam(value = "radiusKm", defaultValue = "1") double radiusKm,
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return ResponseEntity.ok(ApiUtil.success(memberService.findNearbyMembers(sessionUser, radiusKm, pageable)));
     }
 
     @PutMapping("/update/{memberIdx}")

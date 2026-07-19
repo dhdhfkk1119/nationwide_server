@@ -12,7 +12,10 @@ import com.nationwide.nationwide_server.board_like.BoardLikeService;
 import com.nationwide.nationwide_server.image_file.dto.ImageResponseDTO;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.MemberService;
+import com.nationwide.nationwide_server.member_block.MemberBlockService;
+import com.nationwide.nationwide_server.message.MessagePermissionService;
 import com.nationwide.nationwide_server.my_page.dto.MyPageResponseDTO;
+import com.nationwide.nationwide_server.post_hide.PostHideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -31,6 +34,9 @@ public class MyPageService {
     private final BoardCommentService boardCommentService;
     private final MemberService memberService;
     private final FollowService followService;
+    private final MemberBlockService memberBlockService;
+    private final PostHideService postHideService;
+    private final MessagePermissionService messagePermissionService;
 
     public MyPageResponseDTO.SummaryDTO summary(SessionUser sessionUser) {
         Member member = memberService.findById(sessionUser.getId());
@@ -49,7 +55,10 @@ public class MyPageService {
     ) {
         Member member = memberService.findById(memberId);
         Long viewerId = sessionUser != null ? sessionUser.getId() : null;
-        if (!memberService.canExposeMember(member, viewerId) || !followService.canViewProfile(viewerId, member)) {
+        if (!memberService.canExposeMember(member, viewerId)
+                || !followService.canViewProfile(viewerId, member)
+                || memberBlockService.isBlockedEitherWay(memberId, viewerId)
+                || postHideService.isHiddenFromViewer(memberId, viewerId)) {
             return new SliceImpl<>(List.of(), pageable, false);
         }
         Slice<Board> boardSlice = boardRepository.findByMemberId(memberId, pageable);
@@ -62,7 +71,13 @@ public class MyPageService {
                 .toList();
         Long boardCnt = boardRepository.countByMemberId(member.getId());
         FollowResponseDTO.StatusDTO status = followService.getStatus(viewerId, member.getId());
-        boolean canExposeMember = memberService.canExposeMember(member, viewerId);
+        boolean canExposeMember = memberService.canExposeMember(member, viewerId) && !status.isBlockedByOther();
+
+        boolean canMessage = false;
+        if (canExposeMember && viewerId != null && !viewerId.equals(member.getId())) {
+            Member viewer = memberService.findById(viewerId);
+            canMessage = messagePermissionService.canSendMessage(viewer, member);
+        }
 
         return MyPageResponseDTO.SummaryDTO.of(
                 member,
@@ -77,7 +92,11 @@ public class MyPageService {
                 status.getRelationStatus(),
                 status.isFollowing(),
                 status.isFollower(),
-                canExposeMember
+                canExposeMember,
+                status.isBlocking(),
+                status.isBlockedByOther(),
+                status.isHidingFromOther(),
+                canMessage
         );
     }
 

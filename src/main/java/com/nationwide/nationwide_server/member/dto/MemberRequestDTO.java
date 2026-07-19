@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nationwide.nationwide_server.member.Member;
 import com.nationwide.nationwide_server.member.m_enum.Gender;
 import com.nationwide.nationwide_server.member.m_enum.LoginType;
+import com.nationwide.nationwide_server.member.m_enum.MessagePermission;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -90,11 +91,26 @@ public class MemberRequestDTO {
         private boolean isPrivateProfile;
         @JsonProperty("isLocationVisible")
         private boolean isLocationVisible;
+        private MessagePermission messagePermission;
     }
 
     @Data
     public static class DeactivateRequestDTO {
         private int durationMonths;
+    }
+
+    @Data
+    public static class CurrentLocationDTO {
+        private Double latitude;
+        private Double longitude;
+    }
+
+    @Data
+    public static class ManualLocationDTO {
+        private String fullAddress;
+        private String address;
+        private String address1;
+        private String address2;
     }
 
     @Data

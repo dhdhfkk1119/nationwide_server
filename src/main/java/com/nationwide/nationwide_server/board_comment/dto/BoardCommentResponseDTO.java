@@ -38,7 +38,7 @@ public class BoardCommentResponseDTO {
         dto.boardCommentIdx = boardComment.getBoardCommentIdx();
         dto.memberIdx = member.getId();
         dto.name = member.getName();
-        dto.nickName = member.getNickName();
+        dto.nickName = member.getDisplayNickName();
         dto.profileImage = member.getImageFiles().isEmpty()
                 ? "/uploads/member-images/profile.png"
                 : member.getImageFiles().get(0).getImageFilePath();

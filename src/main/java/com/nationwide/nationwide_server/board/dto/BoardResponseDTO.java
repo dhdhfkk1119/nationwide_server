@@ -13,8 +13,7 @@ import java.util.List;
 
 public class BoardResponseDTO {
     private static String displayName(Board board) {
-        String nickName = board.getMember().getNickName();
-        return nickName != null && !nickName.isBlank() ? nickName : board.getMember().getName();
+        return board.getMember().getDisplayNickName();
     }
 
     @Data

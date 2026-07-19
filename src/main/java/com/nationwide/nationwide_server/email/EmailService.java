@@ -12,7 +12,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nationwide.nationwide_server.member.Member;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 @Service
@@ -73,6 +76,55 @@ public class EmailService {
         // 5. 인증 완료 처리
         verification.setVerified(true);
         emailRepository.save(verification);
+    }
+
+    // 로그인 IP가 이전과 다르면(첫 로그인 제외) 등록된 이메일로 알림 발송. 이메일이 없는 회원(예: 카카오 로그인)은 조용히 건너뛴다.
+    @Transactional
+    public void notifyIfNewLoginLocation(Member member, String ipAddress) {
+        if (ipAddress == null || ipAddress.isBlank()) {
+            return;
+        }
+
+        boolean isNewIp = member.recordLoginIp(ipAddress);
+        if (!isNewIp) {
+            return;
+        }
+
+        if (member.getEmail() == null || member.getEmail().isBlank()) {
+            return;
+        }
+
+        sendLoginAlertEmail(member.getEmail(), ipAddress);
+    }
+
+    private void sendLoginAlertEmail(String to, String ipAddress) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject("[NationWide] 새로운 위치에서 로그인되었습니다");
+            helper.setText(buildLoginAlertContent(ipAddress), true);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new Exception500("로그인 알림 이메일 발송에 실패했습니다");
+        }
+    }
+
+    private String buildLoginAlertContent(String ipAddress) {
+        String loginTime = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        return "<div style='padding: 20px;'>" +
+                "<h2>새로운 위치에서 로그인되었습니다</h2>" +
+                "<p>회원님의 계정에 이전과 다른 IP로 로그인이 확인되었습니다.</p>" +
+                "<table style='margin-top: 10px;'>" +
+                "<tr><td style='color:#888; padding-right: 12px;'>로그인 시각</td><td>" + loginTime + "</td></tr>" +
+                "<tr><td style='color:#888; padding-right: 12px;'>IP 주소</td><td>" + ipAddress + "</td></tr>" +
+                "</table>" +
+                "<p style='margin-top: 16px;'>본인이 아니라면 즉시 비밀번호를 변경해주세요.</p>" +
+                "</div>";
     }
 
     // 다시 전송
